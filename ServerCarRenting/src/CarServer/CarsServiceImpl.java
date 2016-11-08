@@ -1,12 +1,22 @@
-package CarService;
+package CarServer;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import ClientService.Client;
 
-public class CarsServer {
+public class CarsServiceImpl extends UnicastRemoteObject implements CarsService {
+
+	private static final long serialVersionUID = 1L;
 	private HashMap<String, RentInformation> cars;
+
+	protected CarsServiceImpl() throws RemoteException {
+		cars = new HashMap<>();
+	}
 
 	public boolean addCar(String licensePlate, Car car, String brand, String model, Date firstCirculationDate,
 			double price) {
@@ -28,6 +38,10 @@ public class CarsServer {
 		RentInformation toRent = cars.get(licensePlate);
 
 		return toRent.rent(client);
+	}
+	
+	public List<RentInformation> list(){
+		return cars.values().stream().collect(Collectors.toList());
 	}
 
 }
