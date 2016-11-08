@@ -8,7 +8,7 @@ import ClientService.Client;
 
 public interface CarsService extends Remote {
 
-	boolean addCar(String licensePlate, Car car, String brand, String model, Date firstCirculationDate, double price);
+	boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate, double price);
 
 	void removeCar(String licensePlate);
 

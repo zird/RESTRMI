@@ -18,7 +18,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		cars = new HashMap<>();
 	}
 
-	public boolean addCar(String licensePlate, Car car, String brand, String model, Date firstCirculationDate,
+	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate,
 			double price) {
 		if (!cars.containsKey(licensePlate)) {
 			return false;
