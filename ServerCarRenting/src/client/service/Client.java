@@ -35,6 +35,5 @@ public class Client {
 				+ "\nLast name: " + lastname
 				+ "\nLogin: " + login 
 				+ "\nStatus: " + status;
-		
 	};
 }
