@@ -1,4 +1,4 @@
-package CarService;
+package CarServer;
 
 public class Comment {
 	private int mark;
