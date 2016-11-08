@@ -14,12 +14,12 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	private static final long serialVersionUID = 1L;
 	private HashMap<String, RentInformation> cars;
 
-	protected CarsServiceImpl() throws RemoteException {
+	public CarsServiceImpl() throws RemoteException {
 		cars = new HashMap<>();
 	}
 
 	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate,
-			double price) {
+			double price) throws java.rmi.RemoteException {
 		if (!cars.containsKey(licensePlate)) {
 			return false;
 		}
@@ -27,11 +27,11 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return true;
 	}
 
-	public void removeCar(String licensePlate) {
+	public void removeCar(String licensePlate) throws java.rmi.RemoteException {
 		cars.remove(licensePlate);
 	}
 
-	public boolean rent(Client client, String licensePlate) {
+	public boolean rent(Client client, String licensePlate) throws java.rmi.RemoteException {
 		if (!cars.containsKey(licensePlate)) {
 			return false;
 		}
@@ -40,9 +40,9 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return toRent.rent(client);
 	}
 	
-	public List<RentInformation> list(){
+	/*public List<RentInformation> list(){
 		return cars.values().stream().collect(Collectors.toList());
-	}
+	}*/
 
 
 }
