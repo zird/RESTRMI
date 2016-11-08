@@ -1,20 +1,28 @@
 package client.service;
 
-public class Client {
-	private int login;
-	private Status status;
-	private String firstname;
-	private String lastname;
+import java.util.Objects;
 
-	public Client(int login, Status status, String firstname, String lastname) {
-		this.login = login;
-		this.status = status;
-		this.firstname = firstname;
-		this.lastname = lastname;
+public class Client {
+	private final String login;
+	private final Status status;
+	private final String password;
+	private final String firstname;
+	private final String lastname;
+
+	public Client(String login, String password, Status status, String firstname, String lastname) {
+		this.login = Objects.requireNonNull(login);
+		this.password = Objects.requireNonNull(password);
+		this.status = Objects.requireNonNull(status);
+		this.firstname = Objects.requireNonNull(firstname);
+		this.lastname = Objects.requireNonNull(lastname);
 	}
 
-	public int getLogin() {
+	public String getLogin() {
 		return login;
+	}
+
+	public String getPwd() {
+		return password;
 	}
 
 	public Status getStatus() {
@@ -28,12 +36,18 @@ public class Client {
 	public String getLastname() {
 		return lastname;
 	}
-	
+
 	@Override
 	public String toString() {
-		return    "First name: " + firstname
-				+ "\nLast name: " + lastname
-				+ "\nLogin: " + login 
-				+ "\nStatus: " + status;
+		return "First name: " + firstname + "\nLast name: " + lastname + "\nLogin: " + login + "\nStatus: " + status;
 	};
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Client)) {
+			return false;
+		}
+		Client client = (Client) obj;
+		return login.equals(client.login) && password.equals(client.password);
+	}
 }

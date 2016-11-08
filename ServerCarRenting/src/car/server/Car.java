@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Car implements Serializable {
 
@@ -19,11 +20,11 @@ public class Car implements Serializable {
 	private boolean hasBeenRented;
 
 	public Car(String licensePlate, String brand, String model, Date firstCirculationDate, double price) {
-		this.licensePlate = licensePlate;
-		this.brand = brand;
-		this.model = model;
-		this.firstCirculationDate = firstCirculationDate;
-		this.price = price;
+		this.licensePlate = Objects.requireNonNull(licensePlate);
+		this.brand = Objects.requireNonNull(brand);
+		this.model = Objects.requireNonNull(model);
+		this.firstCirculationDate = Objects.requireNonNull(firstCirculationDate);
+		this.price = Objects.requireNonNull(price);
 		comments = new ArrayList<>();
 		isAvailable = true;
 		hasBeenRented = false;
