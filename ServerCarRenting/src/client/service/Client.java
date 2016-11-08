@@ -28,4 +28,13 @@ public class Client {
 	public String getLastname() {
 		return lastname;
 	}
+	
+	@Override
+	public String toString() {
+		return    "First name: " + firstname
+				+ "\nLast name: " + lastname
+				+ "\nLogin: " + login 
+				+ "\nStatus: " + status;
+		
+	};
 }
