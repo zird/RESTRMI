@@ -1,7 +1,6 @@
 package car.client;
 
 import java.rmi.Naming;
-import java.rmi.RMISecurityManager;
 import java.util.Date;
 
 import car.server.CarsService;
@@ -9,7 +8,9 @@ import car.server.CarsService;
 public class CarClient {
 	public static void main(String[] args) {
 		try {
-			String codebase = "file://./";
+			String codebase = "file://./car/server/";
+			String current = new java.io.File( "." ).getCanonicalPath();
+			System.out.println(current);
 			System.setProperty("java.rmi.server.codebase", codebase);
 			System.setProperty("java.security.policy", "grant.policy");
 			//System.setSecurityManager(new RMISecurityManager());
