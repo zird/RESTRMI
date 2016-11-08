@@ -1,12 +1,15 @@
 package car.server;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import client.service.Client;
 import client.service.Status;
 
-public class RentInformation {
+public class RentInformation implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private Client currentRenter = null;
 	private final Car car;
 	private List<Client> waitingQueue;
@@ -36,7 +39,10 @@ public class RentInformation {
 			waitingQueue.add(i, client);
 		}
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return car.toString();
+	}
 
 }

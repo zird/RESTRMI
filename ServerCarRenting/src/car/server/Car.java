@@ -1,10 +1,13 @@
 package car.server;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Car {
+public class Car implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private String licensePlate;
 	private String brand;
 	private String model;
@@ -14,8 +17,6 @@ public class Car {
 	private List<Comment> comments;
 	private boolean isAvailable;
 	private boolean hasBeenRented;
-
-	
 
 	public Car(String licensePlate, String brand, String model, Date firstCirculationDate, double price) {
 		this.licensePlate = licensePlate;
@@ -88,6 +89,11 @@ public class Car {
 		}
 		Car car = (Car) obj;
 		return licensePlate.equals(car.licensePlate);
+	}
+
+	@Override
+	public String toString() {
+		return brand + " " + model + " : " + licensePlate + " - " + price;
 	}
 
 }
