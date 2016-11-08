@@ -1,4 +1,4 @@
-package ClientService;
+package client.service;
 
 public class Client {
 	private int login;

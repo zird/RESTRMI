@@ -1,10 +1,10 @@
-package CarServer;
+package car.server;
 
 import java.rmi.Remote;
 import java.util.Date;
 import java.util.List;
 
-import ClientService.Client;
+import client.service.Client;
 
 public interface CarsService extends Remote {
 

@@ -1,4 +1,4 @@
-package CarServer;
+package car.server;
 
 public class Comment {
 	private int mark;

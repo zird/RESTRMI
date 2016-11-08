@@ -1,4 +1,4 @@
-package CarServer;
+package car.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ClientService.Client;
+import client.service.Client;
 
 public class CarsServiceImpl extends UnicastRemoteObject implements CarsService {
 
@@ -43,5 +43,6 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	public List<RentInformation> list(){
 		return cars.values().stream().collect(Collectors.toList());
 	}
+
 
 }

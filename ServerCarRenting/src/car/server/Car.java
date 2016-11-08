@@ -1,4 +1,4 @@
-package CarServer;
+package car.server;
 
 import java.util.ArrayList;
 import java.util.Date;

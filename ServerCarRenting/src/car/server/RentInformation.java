@@ -1,10 +1,10 @@
-package CarServer;
+package car.server;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ClientService.Client;
-import ClientService.Status;
+import client.service.Client;
+import client.service.Status;
 
 public class RentInformation {
 	private Client currentRenter = null;
