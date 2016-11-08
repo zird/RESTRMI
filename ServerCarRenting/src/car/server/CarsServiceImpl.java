@@ -18,9 +18,9 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		cars = new HashMap<>();
 	}
 
-	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate,
-			double price) throws java.rmi.RemoteException {
-		if (!cars.containsKey(licensePlate)) {
+	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
+			throws java.rmi.RemoteException {
+		if (cars.containsKey(licensePlate)) {
 			return false;
 		}
 		cars.put(licensePlate, new RentInformation(new Car(licensePlate, brand, model, firstCirculationDate, price)));
@@ -39,10 +39,9 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 		return toRent.rent(client);
 	}
-	
-	/*public List<RentInformation> list(){
-		return cars.values().stream().collect(Collectors.toList());
-	}*/
 
+	public List<RentInformation> list() throws RemoteException {
+		return cars.values().stream().collect(Collectors.toList());
+	}
 
 }
