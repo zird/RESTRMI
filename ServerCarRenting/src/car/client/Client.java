@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface Client extends Remote {
 
-	int getLogin() throws RemoteException;
+	String getLogin() throws RemoteException;
 
 	String getLastname() throws RemoteException;
 
