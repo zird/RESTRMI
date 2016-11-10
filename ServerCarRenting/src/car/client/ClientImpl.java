@@ -1,12 +1,12 @@
-package client.service;
+package car.client;
 
-public class Client {
+public class ClientImpl implements Client{
 	private int login;
 	private Status status;
 	private String firstname;
 	private String lastname;
 
-	public Client(int login, Status status, String firstname, String lastname) {
+	public ClientImpl(int login, Status status, String firstname, String lastname) {
 		this.login = login;
 		this.status = status;
 		this.firstname = firstname;
@@ -28,13 +28,10 @@ public class Client {
 	public String getLastname() {
 		return lastname;
 	}
-	
+
 	@Override
 	public String toString() {
-		return    "First name: " + firstname
-				+ "\nLast name: " + lastname
-				+ "\nLogin: " + login 
-				+ "\nStatus: " + status;
-		
+		return "First name: " + firstname + "\nLast name: " + lastname + "\nLogin: " + login + "\nStatus: " + status;
+
 	};
 }

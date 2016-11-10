@@ -7,12 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import client.service.Client;
-
 public class CarsServiceImpl extends UnicastRemoteObject implements CarsService {
 
 	private static final long serialVersionUID = 1L;
-	private HashMap<String, RentInformation> cars;
+	private HashMap<String, RentInformationImpl> cars;
 
 	public CarsServiceImpl() throws RemoteException {
 		cars = new HashMap<>();
@@ -23,7 +21,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		if (cars.containsKey(licensePlate)) {
 			return false;
 		}
-		cars.put(licensePlate, new RentInformation(new Car(licensePlate, brand, model, firstCirculationDate, price)));
+		cars.put(licensePlate, new RentInformationImpl(new CarImpl(licensePlate, brand, model, firstCirculationDate, price)));
 		return true;
 	}
 

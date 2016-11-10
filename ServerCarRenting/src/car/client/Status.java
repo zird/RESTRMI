@@ -1,4 +1,4 @@
-package client.service;
+package car.client;
 
 public enum Status {
 	STUDENT,PROFESSOR,OUTSIDER;
