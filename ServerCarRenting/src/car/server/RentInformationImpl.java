@@ -17,7 +17,9 @@ public class RentInformationImpl implements Serializable, RentInformation {
 		waitingQueue = new ArrayList<>();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see car.server.RentInformation#rent(car.client.Client)
 	 */
 	@Override

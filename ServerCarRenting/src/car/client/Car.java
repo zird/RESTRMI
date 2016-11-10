@@ -4,28 +4,28 @@ import java.util.Date;
 
 public interface Car {
 
-	String getLicensePlate();
+	public String getLicensePlate();
 
-	String getBrand();
+	public String getBrand();
 
-	String getModel();
+	public String getModel();
 
-	Date getFirstCirculationDate();
+	public Date getFirstCirculationDate();
 
-	double getPrice();
+	public double getPrice();
 
-	void setPrice(double price);
+	public void setPrice(double price);
 
-	boolean addComment(int mark, String comment);
+	public boolean addComment(int mark, String comment);
 
-	boolean isAvailable();
+	public boolean isAvailable();
 
-	void setAvailable(boolean isAvailable);
+	public void setAvailable(boolean isAvailable);
 
-	boolean hasBeenRented();
+	public boolean hasBeenRented();
 
-	void setHasBeenRented();
+	public void setHasBeenRented();
 
-	int hashCode();
+	public int hashCode();
 
 }

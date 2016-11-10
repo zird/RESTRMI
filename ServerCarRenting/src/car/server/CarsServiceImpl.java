@@ -35,25 +35,24 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		cars.remove(licensePlate);
 	}
 
-	public boolean rent(String login, String licensePlate) throws RemoteException {
+	public boolean rent(Client client, String licensePlate) throws java.rmi.RemoteException {
 		if (!cars.containsKey(licensePlate)) {
 			return false;
 		}
 		RentInformation toRent = cars.get(licensePlate);
 
-		return toRent.rent(getClient(login));
+		return toRent.rent(client);
 	}
 
-	private Client getClient(String login) throws RemoteException {
-		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
-			Client client = it.next();
-			if (client.getLogin().equals(login)) {
-				return client;
-			}
-		}
-		return null;
-
-	}
+	// private Client getClient(String login) throws RemoteException {
+	// for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
+	// Client client = it.next();
+	// if (client.getLogin().equals(login)) {
+	// return client;
+	// }
+	// }
+	// return null;
+	// }
 
 	public List<RentInformation> list() throws RemoteException {
 		return cars.values().stream().collect(Collectors.toList());
@@ -79,14 +78,15 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return clients.add(new ClientImpl(login, password, stat, firstname, lastname));
 	}
 
-	public String logIn(String login, String password) throws RemoteException {
+	public Client logIn(String login, String password) throws RemoteException {
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
 			Client client = it.next();
 			if (client.equals(new ClientImpl(login, password, Status.PROFESSOR, "", ""))) {
-				return client.getLogin();
+				return client;
 			}
 		}
 		return null;
 	}
+
 }

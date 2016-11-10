@@ -2,7 +2,7 @@ package car.server;
 
 import java.io.Serializable;
 
-public class Comment implements Serializable{
+public class Comment implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int mark;
