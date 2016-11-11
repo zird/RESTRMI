@@ -18,6 +18,7 @@ public class RentInformationImpl implements RentInformation {
 	public boolean rent(Client client) throws RemoteException {
 		if (currentRenter == null) {
 			currentRenter = client;
+			currentRenter.notifyRent(car);
 			return true;
 		}
 		addToWaitingQueue(client);
@@ -25,7 +26,7 @@ public class RentInformationImpl implements RentInformation {
 	}
 
 	private void addToWaitingQueue(Client client) throws RemoteException {
-		if (waitingQueue.size() == 0 || client.getStatus() == Status.PROFESSOR) {
+		if (waitingQueue.isEmpty()) {
 			waitingQueue.add(client);
 		} else {
 			int i = 0;

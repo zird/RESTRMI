@@ -15,11 +15,22 @@ public class CarClient {
 			CarsService carService = (CarsService) Naming.lookup("rmi://localhost:1099/CarsService");
 
 			String login = args[0];
-			String passwd = args[0];
-			String firstname = args[0];
-			String lastname = args[0];
+			String passwd = args[1];
+			String firstname = args[2];
+			String lastname = args[3];
+			String status = args[4];
 
-			Client client1 = new ClientImpl(login, passwd, firstname, lastname, Status.STUDENT);
+			Status st = Status.OUTSIDER;
+			switch (status) {
+			case "stud":
+				st = Status.STUDENT;
+				break;
+			case "prof":
+				st = Status.PROFESSOR;
+				break;
+			}
+
+			Client client1 = new ClientImpl(login, passwd, firstname, lastname, st);
 			carService.addClient(client1);
 			if (false == carService.logIn(client1)) {
 				System.out.println("Login failed");
@@ -47,6 +58,7 @@ public class CarClient {
 			carService.returnCar(client1, "BC YC");
 			scan.close();
 
+			
 		} catch (Exception e) {
 			System.out.println("Exception" + e);
 		}
