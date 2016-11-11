@@ -1,24 +1,13 @@
-
-
 import java.io.Serializable;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-public class Comment implements Serializable{
+public interface Comment extends Remote, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private int mark;
-	private String comment;
+	public String getAuthor() throws RemoteException;
 
-	public Comment(int mark, String comment) {
-		this.mark = mark;
-		this.comment = comment;
-	}
+	public int getMark() throws RemoteException;
 
-	public int getMark() {
-		return mark;
-	}
-
-	public String getComment() {
-		return comment;
-	}
+	public String getComment() throws RemoteException;
 
 }
