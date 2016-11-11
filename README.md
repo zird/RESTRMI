@@ -23,6 +23,7 @@ Utiliser la branche OnlyRmi :
 
 ### Recupérer la branche Only RMI
 ```
+git fetch
 git branch -a
 ```
 Cet appel renvoie toutes les branches présentes : `remotes/origin/Only-RMI` est la branche qui nous intéresse
