@@ -1,9 +1,9 @@
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Objects;
 
-public class ClientImpl implements Client, Serializable {
+public class ClientImpl extends UnicastRemoteObject implements Client {
 
 	private static final long serialVersionUID = 1L;
 	private final String login;
@@ -12,7 +12,8 @@ public class ClientImpl implements Client, Serializable {
 	private final String firstname;
 	private final String lastname;
 
-	public ClientImpl(String login, String password, String firstname, String lastname, Status status) {
+	public ClientImpl(String login, String password, String firstname, String lastname, Status status)
+			throws RemoteException {
 		this.login = Objects.requireNonNull(login);
 		this.password = Objects.requireNonNull(password);
 		this.status = Objects.requireNonNull(status);
@@ -20,23 +21,23 @@ public class ClientImpl implements Client, Serializable {
 		this.lastname = Objects.requireNonNull(lastname);
 	}
 
-	public String getLogin() {
+	public String getLogin() throws RemoteException {
 		return login;
 	}
 
-	public String getPwd() {
+	public String getPwd() throws RemoteException {
 		return password;
 	}
 
-	public Status getStatus() {
+	public Status getStatus() throws RemoteException {
 		return status;
 	}
 
-	public String getFirstname() {
+	public String getFirstname() throws RemoteException {
 		return firstname;
 	}
 
-	public String getLastname() {
+	public String getLastname() throws RemoteException {
 		return lastname;
 	}
 

@@ -1,12 +1,12 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CarsServiceImpl extends UnicastRemoteObject implements CarsService {
 
@@ -47,7 +47,8 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 	@Override
 	public List<RentInformation> list() throws RemoteException {
-		return cars.values().stream().collect(Collectors.toList());
+		// return cars.values().stream().collect(Collectors.toList());
+		return new ArrayList<RentInformation>(cars.values());
 	}
 
 	@Override

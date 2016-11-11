@@ -1,9 +1,8 @@
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentInformationImpl implements Serializable, RentInformation {
+public class RentInformationImpl implements RentInformation {
 
 	private static final long serialVersionUID = 1L;
 	private Client currentRenter = null;
@@ -53,7 +52,7 @@ public class RentInformationImpl implements Serializable, RentInformation {
 			Client returner = currentRenter;
 			returner.notifyReturn(car);
 			currentRenter.notifyRent(car);
-			
+
 			currentRenter = newClient;
 			waitingQueue.remove(0);
 			return true;

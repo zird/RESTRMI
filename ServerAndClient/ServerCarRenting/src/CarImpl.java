@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,8 @@ public class CarImpl implements Serializable, Car {
 	private boolean isAvailable;
 	private boolean hasBeenRented;
 
-	public CarImpl(String licensePlate, String brand, String model, Date firstCirculationDate, double price) {
+	public CarImpl(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
+			throws RemoteException {
 		this.licensePlate = licensePlate;
 		this.brand = brand;
 		this.model = model;
@@ -28,37 +30,37 @@ public class CarImpl implements Serializable, Car {
 	}
 
 	@Override
-	public String getLicensePlate() {
+	public String getLicensePlate() throws RemoteException {
 		return licensePlate;
 	}
 
 	@Override
-	public String getBrand() {
+	public String getBrand() throws RemoteException {
 		return brand;
 	}
 
 	@Override
-	public String getModel() {
+	public String getModel() throws RemoteException {
 		return model;
 	}
 
 	@Override
-	public Date getFirstCirculationDate() {
+	public Date getFirstCirculationDate() throws RemoteException {
 		return firstCirculationDate;
 	}
 
 	@Override
-	public double getPrice() {
+	public double getPrice() throws RemoteException {
 		return price;
 	}
 
 	@Override
-	public void setPrice(double price) {
+	public void setPrice(double price) throws RemoteException {
 		this.price = price;
 	}
 
 	@Override
-	public boolean addComment(int mark, String comment) {
+	public boolean addComment(int mark, String comment) throws RemoteException {
 		if ((mark < 0 && mark > 20) || comment == null) {
 			return false;
 		}
@@ -67,22 +69,22 @@ public class CarImpl implements Serializable, Car {
 	}
 
 	@Override
-	public boolean isAvailable() {
+	public boolean isAvailable() throws RemoteException {
 		return isAvailable;
 	}
 
 	@Override
-	public void setAvailable(boolean isAvailable) {
+	public void setAvailable(boolean isAvailable) throws RemoteException {
 		this.isAvailable = isAvailable;
 	}
 
 	@Override
-	public boolean hasBeenRented() {
+	public boolean hasBeenRented() throws RemoteException {
 		return hasBeenRented;
 	}
 
 	@Override
-	public void setHasBeenRented() {
+	public void setHasBeenRented() throws RemoteException {
 		this.hasBeenRented = true;
 	}
 

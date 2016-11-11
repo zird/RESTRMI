@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface Client extends Remote {
+public interface Client extends Remote, Serializable {
 
 	public String getLogin() throws RemoteException;
 
@@ -10,9 +11,9 @@ public interface Client extends Remote {
 	public String getFirstname() throws RemoteException;
 
 	public Status getStatus() throws RemoteException;
-	
+
 	public void notifyRent(Car car) throws RemoteException;
-	
+
 	public void notifyReturn(Car car) throws RemoteException;
 
 }
