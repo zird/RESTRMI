@@ -1,5 +1,3 @@
-
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,57 +27,36 @@ public class CarImpl implements Serializable, Car {
 		hasBeenRented = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#getLicensePlate()
-	 */
 	@Override
 	public String getLicensePlate() {
 		return licensePlate;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#getBrand()
-	 */
 	@Override
 	public String getBrand() {
 		return brand;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#getModel()
-	 */
 	@Override
 	public String getModel() {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#getFirstCirculationDate()
-	 */
 	@Override
 	public Date getFirstCirculationDate() {
 		return firstCirculationDate;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#getPrice()
-	 */
 	@Override
 	public double getPrice() {
 		return price;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#setPrice(double)
-	 */
 	@Override
 	public void setPrice(double price) {
 		this.price = price;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#addComment(int, java.lang.String)
-	 */
 	@Override
 	public boolean addComment(int mark, String comment) {
 		if ((mark < 0 && mark > 20) || comment == null) {
@@ -89,41 +66,26 @@ public class CarImpl implements Serializable, Car {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#isAvailable()
-	 */
 	@Override
 	public boolean isAvailable() {
 		return isAvailable;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#setAvailable(boolean)
-	 */
 	@Override
 	public void setAvailable(boolean isAvailable) {
 		this.isAvailable = isAvailable;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#hasBeenRented()
-	 */
 	@Override
 	public boolean hasBeenRented() {
 		return hasBeenRented;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#setHasBeenRented()
-	 */
 	@Override
 	public void setHasBeenRented() {
 		this.hasBeenRented = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.Car#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return licensePlate.hashCode();

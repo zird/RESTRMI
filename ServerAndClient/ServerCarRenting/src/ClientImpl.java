@@ -1,8 +1,11 @@
 
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ClientImpl implements Client {
+public class ClientImpl implements Client, Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private final String login;
 	private final Status status;
 	private final String password;

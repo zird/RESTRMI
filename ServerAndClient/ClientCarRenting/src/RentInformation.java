@@ -1,9 +1,8 @@
-
-
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public interface RentInformation {
+public interface RentInformation extends Serializable{
 
-	boolean rent(Client client) throws RemoteException;
+	public boolean rent(Client client) throws RemoteException;
 
 }

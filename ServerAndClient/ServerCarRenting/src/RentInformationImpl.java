@@ -1,5 +1,3 @@
-
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -17,9 +15,6 @@ public class RentInformationImpl implements Serializable, RentInformation {
 		waitingQueue = new ArrayList<>();
 	}
 
-	/* (non-Javadoc)
-	 * @see car.server.RentInformation#rent(car.client.Client)
-	 */
 	@Override
 	public boolean rent(Client client) throws RemoteException {
 		if (currentRenter == null) {

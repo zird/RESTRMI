@@ -1,16 +1,14 @@
-
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Client extends Remote {
 
-	String getLogin() throws RemoteException;
+	public String getLogin() throws RemoteException;
 
-	String getLastname() throws RemoteException;
+	public String getLastname() throws RemoteException;
 
-	String getFirstname() throws RemoteException;
+	public String getFirstname() throws RemoteException;
 
-	Status getStatus() throws RemoteException;
+	public Status getStatus() throws RemoteException;
 
 }

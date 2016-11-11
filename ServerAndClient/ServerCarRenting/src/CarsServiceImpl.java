@@ -1,5 +1,3 @@
-
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
@@ -21,6 +19,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		clients = new HashSet<>();
 	}
 
+	@Override
 	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
 			throws RemoteException {
 		if (cars.containsKey(licensePlate)) {
@@ -31,34 +30,27 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return true;
 	}
 
+	@Override
 	public void removeCar(String licensePlate) throws RemoteException {
 		cars.remove(licensePlate);
 	}
 
-	public boolean rent(String login, String licensePlate) throws RemoteException {
+	@Override
+	public boolean rent(Client client, String licensePlate) throws RemoteException {
 		if (!cars.containsKey(licensePlate)) {
 			return false;
 		}
 		RentInformation toRent = cars.get(licensePlate);
 
-		return toRent.rent(getClient(login));
+		return toRent.rent(client);
 	}
 
-	private Client getClient(String login) throws RemoteException {
-		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
-			Client client = it.next();
-			if (client.getLogin().equals(login)) {
-				return client;
-			}
-		}
-		return null;
-
-	}
-
+	@Override
 	public List<RentInformation> list() throws RemoteException {
 		return cars.values().stream().collect(Collectors.toList());
 	}
 
+	@Override
 	public boolean addClient(String login, String password, String firstname, String lastname, int status)
 			throws RemoteException {
 		Status stat = null;
@@ -79,12 +71,14 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return clients.add(new ClientImpl(login, password, stat, firstname, lastname));
 	}
 
-	public String logIn(String login, String password) throws RemoteException {
+	@Override
+	public Client logIn(String login, String password) throws RemoteException {
+		ClientImpl cmp = new ClientImpl(login, password, Status.PROFESSOR, "", "");
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
 			Client client = it.next();
-			if (client.equals(new ClientImpl(login, password, Status.PROFESSOR, "", ""))) {
-				return client.getLogin();
+			if (client.equals(cmp)) {
+				return client;
 			}
 		}
 		return null;
