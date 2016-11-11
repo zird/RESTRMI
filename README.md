@@ -1,6 +1,11 @@
 # RESTRMI
+
+## Créer le projet 
+Créer des projet Java normaux, ne pas mettre de nom de projet, à la place definissez la location des sources : `ServerCarRenting` et `ClientCarRenting`.
+Verifier que le fichier output est bien bin
+
 ## Pour tester le RMI :
-Modifier le code base si vos fichier n'ont pas la disposition suivante :
+Modifier le codebase si vos fichier n'ont pas la disposition suivante :
 ```
 ServerAndClient
 ├── ClientCarRenting
