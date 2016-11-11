@@ -21,4 +21,6 @@ public interface CarsService extends Remote, Serializable {
 
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException;
 
+	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment)
+			throws RemoteException;
 }

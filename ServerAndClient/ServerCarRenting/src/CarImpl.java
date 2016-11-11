@@ -60,11 +60,11 @@ public class CarImpl implements Serializable, Car {
 	}
 
 	@Override
-	public boolean addComment(int mark, String comment) throws RemoteException {
+	public boolean addComment(String author, int mark, String comment) throws RemoteException {
 		if ((mark < 0 && mark > 20) || comment == null) {
 			return false;
 		}
-		comments.add(new Comment(mark, comment));
+		comments.add(new CommentImpl(author, mark, comment));
 		return true;
 	}
 

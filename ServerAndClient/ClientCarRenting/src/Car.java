@@ -17,7 +17,7 @@ public interface Car extends Remote, Serializable {
 
 	public void setPrice(double price) throws RemoteException;
 
-	public boolean addComment(int mark, String comment) throws RemoteException;
+	public boolean addComment(String author, int mark, String comment) throws RemoteException;
 
 	public boolean isAvailable() throws RemoteException;
 

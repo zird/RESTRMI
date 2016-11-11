@@ -78,4 +78,17 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 		return rentInfos.returnCar(client, licensePlate);
 	}
+
+	@Override
+	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment) {
+		RentInformation rentInfos = cars.get(licensePlate);
+		if (rentInfos == null) {
+			return false;
+		}
+
+		rentInfos.addMarkWithComment(client, mark, comment);
+
+		return false;
+	}
+
 }

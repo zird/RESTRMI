@@ -74,4 +74,14 @@ public class RentInformationImpl implements RentInformation {
 
 	}
 
+	@Override
+	public void addMarkWithComment(Client client, int mark, String note) {
+		try {
+			car.addComment(client.getFirstname() + " " + client.getLastname(), mark, note);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }
