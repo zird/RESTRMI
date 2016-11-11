@@ -42,23 +42,34 @@ public class RentInformationImpl implements RentInformation {
 	}
 
 	@Override
-	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
+	public boolean returnCar(Client client, String licensePlate) {
 		if (currentRenter == null || !currentRenter.equals(client)) {
 			return false;
 		}
+		Client returner = currentRenter;
+		Client newClient = null;
+		try {
 
-		if (!waitingQueue.isEmpty()) {
-			Client newClient = waitingQueue.get(0);
-			Client returner = currentRenter;
-			returner.notifyReturn(car);
-			currentRenter.notifyRent(car);
+			if (!waitingQueue.isEmpty()) {
+				newClient = waitingQueue.get(0);
 
-			currentRenter = newClient;
-			waitingQueue.remove(0);
-			return true;
+				returner.notifyReturn(car);
+				newClient.notifyRent(car);
+
+				currentRenter = newClient;
+				waitingQueue.remove(0);
+				return true;
+			} else {
+				car.setAvailable(true);
+			}
+		} catch (RemoteException e) {
+			currentRenter = returner;
+			if (newClient != null) {
+				waitingQueue.add(0, newClient);
+			}
 		}
 
-		return false;
+		return true;
 
 	}
 
