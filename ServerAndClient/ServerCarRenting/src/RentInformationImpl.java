@@ -42,4 +42,25 @@ public class RentInformationImpl implements Serializable, RentInformation {
 		return car.toString();
 	}
 
+	@Override
+	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
+		if (currentRenter == null || !currentRenter.equals(client)) {
+			return false;
+		}
+
+		if (!waitingQueue.isEmpty()) {
+			Client newClient = waitingQueue.get(0);
+			Client returner = currentRenter;
+			returner.notifyReturn(car);
+			currentRenter.notifyRent(car);
+			
+			currentRenter = newClient;
+			waitingQueue.remove(0);
+			return true;
+		}
+
+		return false;
+
+	}
+
 }

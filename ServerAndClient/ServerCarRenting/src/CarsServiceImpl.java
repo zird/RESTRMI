@@ -83,4 +83,15 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		}
 		return null;
 	}
+
+	@Override
+	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
+		RentInformation rentInfos = cars.get(licensePlate);
+
+		if (rentInfos != null) {
+			rentInfos.returnCar(client, licensePlate);
+		}
+
+		return false;
+	}
 }

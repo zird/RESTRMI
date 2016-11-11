@@ -1,6 +1,6 @@
 
-
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Objects;
 
 public class ClientImpl implements Client, Serializable {
@@ -52,5 +52,15 @@ public class ClientImpl implements Client, Serializable {
 		}
 		ClientImpl client = (ClientImpl) obj;
 		return login.equals(client.login) && password.equals(client.password);
+	}
+
+	@Override
+	public void notifyRent(Car car) throws RemoteException {
+		System.out.println("you have been granted the car : " + car);
+	}
+
+	@Override
+	public void notifyReturn(Car car) throws RemoteException {
+		System.out.println("you have returned the car : " + car);
 	}
 }
