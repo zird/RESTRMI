@@ -13,18 +13,22 @@ public class CarClient {
 			System.setSecurityManager(new RMISecurityManager());
 			CarsService carService = (CarsService) Naming.lookup("rmi://localhost:1099/CarsService");
 
-			System.out.println(carService.addClient("cchheang", "1234", "chheang", "christophe", 1));
-			Client client1 = carService.logIn("cchheang", "1234");
-			if (client1 == null) {
-				System.out.println("Login null");
+			
+			Client client1 = new ClientImpl("cchheang", "1234", "chheang", "christophe", Status.STUDENT);
+			carService.addClient(client1);
+			if( false == carService.logIn(client1)){
+				System.out.println("Login failed");
+					
 			}
 			
-			System.out.println(carService.addClient("rsim", "azer", "sim", "rene", 1));
-			Client client2 = carService.logIn("rsim", "azer");
-			if (client2 == null) {
-				System.out.println("Login null");
+			Client client2 = new ClientImpl("rsim", "azer", "sim", "rene", Status.STUDENT);
+			carService.addClient(client2);
+			if( false == carService.logIn(client2)){
+				System.out.println("Login failed");
+					
 			}
 			
+	
 			
 			System.out.println(carService.addCar("BC YC", "VW", "POLO", new Date(), 13000));
 			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", new Date(), 13000));
@@ -34,12 +38,10 @@ public class CarClient {
 			System.out.println(carService.rent(client1, "BC YC"));
 			System.out.println(carService.rent(client2, "BC YC"));
 			
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 			
 			carService.returnCar(client1, "BC YC");
-			
-			
-			
+						
 			
 
 		} catch (Exception e) {

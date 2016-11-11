@@ -14,10 +14,9 @@ public interface CarsService extends Remote {
 
 	public List<RentInformation> list() throws RemoteException;
 
-	public Client logIn(String login, String password) throws RemoteException;
+	public boolean logIn(Client client) throws RemoteException;
 
-	public boolean addClient(String login, String password, String firstname, String lastname, int status)
-			throws RemoteException;
+	public boolean addClient(Client client) throws RemoteException;
 
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException;
 

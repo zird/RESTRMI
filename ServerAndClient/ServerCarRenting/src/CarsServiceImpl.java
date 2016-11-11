@@ -51,47 +51,30 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean addClient(String login, String password, String firstname, String lastname, int status)
-			throws RemoteException {
-		Status stat = null;
-		switch (status) {
-		case 0:
-			stat = Status.STUDENT;
-			break;
-		case 1:
-			stat = Status.PROFESSOR;
-			break;
-		case 2:
-			stat = Status.OUTSIDER;
-			break;
-		default:
-			stat = Status.OUTSIDER;
-			break;
-		}
-		return clients.add(new ClientImpl(login, password, stat, firstname, lastname));
+	public boolean addClient(Client client) throws RemoteException {
+		return clients.add(client);
 	}
 
 	@Override
-	public Client logIn(String login, String password) throws RemoteException {
-		ClientImpl cmp = new ClientImpl(login, password, Status.PROFESSOR, "", "");
+	public boolean logIn(Client client) throws RemoteException {
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
-			Client client = it.next();
-			if (client.equals(cmp)) {
-				return client;
+			Client cmp = it.next();
+			if (cmp.equals(client)) {
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 
 	@Override
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
 		RentInformation rentInfos = cars.get(licensePlate);
 
-		if (rentInfos != null) {
-			rentInfos.returnCar(client, licensePlate);
+		if (rentInfos == null) {
+			return false;
 		}
 
-		return false;
+		return rentInfos.returnCar(client, licensePlate);
 	}
 }
