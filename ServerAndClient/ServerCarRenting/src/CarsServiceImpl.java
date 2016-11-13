@@ -119,8 +119,8 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public Car getCarByLicencePlate(String licencePlate) throws RemoteException {
-		return cars.get(licencePlate).getCar();
+	public Car getCarByLicensePlate(String licensePlate) throws RemoteException {
+		return cars.get(licensePlate).getCar();
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class CarClient {
 			System.out.println(carService.getSellableCars());
 
 			/* Buy car */
-			Car target = carService.getCarByLicencePlate("EBZ");
+			Car target = carService.getCarByLicensePlate("EBZ");
 			client1.addCarToBasket(target);
 			List<Car> cars = client1.getBasket();
 
