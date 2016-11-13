@@ -1,6 +1,7 @@
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Scanner;
 
 @SuppressWarnings("deprecation")
@@ -13,7 +14,6 @@ public class CarClient {
 			System.setProperty("java.security.policy", "grant.policy");
 			System.setSecurityManager(new RMISecurityManager());
 			CarsService carService = (CarsService) Naming.lookup("rmi://localhost:1099/CarsService");
-
 			String login = args[0];
 			String passwd = args[1];
 			String firstname = args[2];
@@ -45,22 +45,35 @@ public class CarClient {
 			//
 			// }
 
-			System.out.println(carService.addCar("BC YC", "VW", "POLO", new Date(), 13000));
-			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", new Date(), 13000));
+			System.out.println(carService.addCar("BC YC", "VW", "POLO", Calendar.getInstance(Locale.FRANCE), 13000));
+			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
+			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
+			System.out.println(carService.addCar("EBZ", "TWINGO", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
+			System.out.println(carService.addCar("EBH", "TWINGO", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
 
 			System.out.println(carService.list());
 
 			System.out.println(carService.rent(client1, "BC YC"));
 			// System.out.println(carService.rent(client2, "BC YC"));
 
+			System.out.println(" ----- Recherche de Twingo ------");
+			System.out.println(carService.search("TWINGO"));
+			System.out.println("\n ----- Recherche de Zafira ------");
+			System.out.println(carService.search("ZAFIRA"));
+
 			Scanner scan = new Scanner(System.in);
 			scan.nextLine();
 			carService.returnCar(client1, "BC YC");
 			scan.close();
 
-			
 		} catch (Exception e) {
+			usage();
 			System.out.println("Exception" + e);
+			return;
 		}
+	}
+
+	private static void usage() {
+		System.out.println("java CarClient login password firstname lastname status");
 	}
 }
