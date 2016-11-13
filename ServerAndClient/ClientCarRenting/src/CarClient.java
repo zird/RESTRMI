@@ -51,6 +51,7 @@ public class CarClient {
 			System.out.println(carService.addCar("EBZ", "TWINGO", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
 			System.out.println(carService.addCar("EBH", "TWINGO", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
 
+
 			System.out.println(carService.list());
 
 			System.out.println(carService.rent(client1, "BC YC"));

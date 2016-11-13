@@ -12,14 +12,14 @@ public class CarImpl implements Serializable, Car {
 	private String licensePlate;
 	private String brand;
 	private String model;
-	private Date firstCirculationDate;
+	private Calendar firstCirculationDate;
 	private double price;
 
 	private List<Comment> comments;
 	private boolean isAvailable;
 	private boolean hasBeenRented;
 
-	public CarImpl(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
+	public CarImpl(String licensePlate, String brand, String model, Calendar firstCirculationDate, double price)
 			throws RemoteException {
 		this.licensePlate = licensePlate;
 		this.brand = brand;
@@ -47,7 +47,7 @@ public class CarImpl implements Serializable, Car {
 	}
 
 	@Override
-	public Date getFirstCirculationDate() throws RemoteException {
+	public Calendar getFirstCirculationDate() throws RemoteException {
 		return firstCirculationDate;
 	}
 
@@ -116,7 +116,7 @@ public class CarImpl implements Serializable, Car {
 	
 	@Override
 	public int getYearOfCirculation() throws RemoteException{
-		Calendar a = getCalendar(firstCirculationDate);
+		Calendar a = firstCirculationDate;
 		Calendar b = getCalendar(new Date());
 		System.out.println(firstCirculationDate);
 		int diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR);

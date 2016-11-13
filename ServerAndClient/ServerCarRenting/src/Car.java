@@ -1,7 +1,7 @@
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Date;
+import java.util.Calendar;
 
 public interface Car extends Remote, Serializable {
 
@@ -11,7 +11,7 @@ public interface Car extends Remote, Serializable {
 
 	public String getModel() throws RemoteException;
 
-	public Date getFirstCirculationDate() throws RemoteException;
+	public Calendar getFirstCirculationDate() throws RemoteException;
 
 	public double getPrice() throws RemoteException;
 
