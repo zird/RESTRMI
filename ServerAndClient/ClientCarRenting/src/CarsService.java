@@ -15,7 +15,7 @@ public interface CarsService extends Remote, Serializable {
 
 	public List<RentInformation> list() throws RemoteException;
 
-	public boolean logIn(Client client) throws RemoteException;
+	public Client logIn(String login, String password) throws RemoteException;
 
 	public boolean addClient(Client client) throws RemoteException;
 
@@ -23,11 +23,12 @@ public interface CarsService extends Remote, Serializable {
 
 	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment)
 			throws RemoteException;
-	
-	public List<Car> search(String str) throws RemoteException;
-	
-	public List<Car> sellableCars() throws RemoteException;
-	
-	public Car getCarByLicencePlate(String licencePlate) throws RemoteException;
-}
 
+	public List<Car> search(String str) throws RemoteException;
+
+	public List<Car> getSellableCars() throws RemoteException;
+
+	public Car getCarByLicencePlate(String licencePlate) throws RemoteException;
+
+	public boolean purchase(Client client, List<Car> cars) throws RemoteException;
+}
