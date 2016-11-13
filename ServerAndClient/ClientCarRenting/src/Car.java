@@ -91,4 +91,6 @@ public interface Car extends Remote, Serializable {
 	 * @throws RemoteException
 	 */
 	public int getYearOfCirculation() throws RemoteException;
+	
+	public boolean isSellable() throws RemoteException;
 }

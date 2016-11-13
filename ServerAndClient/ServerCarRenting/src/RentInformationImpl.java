@@ -19,6 +19,7 @@ public class RentInformationImpl implements RentInformation {
 		if (currentRenter == null) {
 			currentRenter = client;
 			currentRenter.notifyRent(car);
+			car.setAvailable(false);
 			return true;
 		}
 		addToWaitingQueue(client);
@@ -43,14 +44,13 @@ public class RentInformationImpl implements RentInformation {
 	}
 
 	@Override
-	public boolean returnCar(Client client, String licensePlate) {
+	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
 		if (currentRenter == null || !currentRenter.equals(client)) {
 			return false;
 		}
 		Client returner = currentRenter;
 		Client newClient = null;
 		try {
-
 			if (!waitingQueue.isEmpty()) {
 				newClient = waitingQueue.get(0);
 
@@ -68,37 +68,30 @@ public class RentInformationImpl implements RentInformation {
 			if (newClient != null) {
 				waitingQueue.add(0, newClient);
 			}
+			throw new RemoteException();
 		}
-
 		return true;
-
 	}
 
 	@Override
-	public void addMarkWithComment(Client client, int mark, String note) {
-		try {
-			car.addComment(client.getFirstname() + " " + client.getLastname(), mark, note);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void addMarkWithComment(Client client, int mark, String note) throws RemoteException {
+
+		car.addComment(client.getFirstname() + " " + client.getLastname(), mark, note);
+
 	}
-	
-	public Car search(String str) throws RemoteException{
-		if(car.getBrand().contains(str) || car.getModel().contains(str)){
+
+	public Car search(String str) throws RemoteException {
+		if (car.getBrand().contains(str) || car.getModel().contains(str)) {
 			return car;
 		}
 		return null;
 	}
-	
+
 	public boolean isSellable() throws RemoteException {
-		if(car.getYearOfCirculation() >= 2 /*&& car.hasBeenRented()*/){
-			return true;
-		}
-		return false;
+		return car.isSellable();
 	}
-	
-	public Car getCar() throws RemoteException{
+
+	public Car getCar() throws RemoteException {
 		return car;
 	}
 }

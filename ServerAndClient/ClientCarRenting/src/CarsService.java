@@ -45,7 +45,9 @@ public interface CarsService extends Remote, Serializable {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public boolean logIn(Client client) throws RemoteException;
+
+	public Client logIn(String login, String password) throws RemoteException;
+
 
 	/**
 	 * @param client
@@ -84,13 +86,15 @@ public interface CarsService extends Remote, Serializable {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public List<Car> sellableCars() throws RemoteException;
+	public List<Car> getSellableCars() throws RemoteException;
 	
 	/**
 	 * @param licencePlate
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Car getCarByLicencePlate(String licencePlate) throws RemoteException;
-}
 
+	public Car getCarByLicencePlate(String licencePlate) throws RemoteException;
+
+	public boolean purchase(Client client, List<Car> cars) throws RemoteException;
+}
