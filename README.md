@@ -4,6 +4,20 @@
 Créer des projet Java normaux, ne pas mettre de nom de projet, à la place definissez la location des sources : `ServerCarRenting` et `ClientCarRenting`.
 Verifier que le fichier output est bien bin
 
+## Faire marcher le dynamic web service
+1. Transformer le projet en Dynamic web service : click droit sur le projet -> Configure -> Facets  -> verifier que uniqument Java et dynamic web module ne soient cochés
+Si cette étape ne marche pas créer un nouveau projet dynamic web
+
+2. Ajouter les config de la VM pour éclispe, définir les propriétés : `-Djava.rmi.server.codebase` et `-Djava.security.policy`
+Pour définir les propriétés : click droit sur la classe MLVCarsService -> Run As -> Run Configuration -> Arguments -> VM Arguments
+
+```exmaple :
+-Djava.rmi.server.codebase="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/" -Djava.security.manager 
+-Djava.security.policy="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy"
+```
+
+Après avoir créer le web service, si vous testez n'oubliez pas de lancer le serveur et un client pour que des véhicules soit dans la base.
+
 ## Pour tester le RMI :
 Modifier le codebase si vos fichier n'ont pas la disposition suivante :
 ```
