@@ -1,7 +1,7 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
+	public boolean addCar(String licensePlate, String brand, String model, Calendar firstCirculationDate, double price)
 			throws RemoteException {
 		if (cars.containsKey(licensePlate)) {
 			return false;

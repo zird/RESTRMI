@@ -1,6 +1,7 @@
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Scanner;
 
 @SuppressWarnings("deprecation")
@@ -45,8 +46,8 @@ public class CarClient {
 			//
 			// }
 
-			System.out.println(carService.addCar("BC YC", "VW", "POLO", new Date(), 13000));
-			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", new Date(), 13000));
+			System.out.println(carService.addCar("BC YC", "VW", "POLO", Calendar.getInstance(Locale.FRANCE), 13000));
+			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
 
 			System.out.println(carService.list());
 
@@ -58,7 +59,6 @@ public class CarClient {
 			carService.returnCar(client1, "BC YC");
 			scan.close();
 
-			
 		} catch (Exception e) {
 			System.out.println("Exception" + e);
 		}
