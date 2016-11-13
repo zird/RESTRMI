@@ -28,4 +28,6 @@ public interface Car extends Remote, Serializable {
 	public void setHasBeenRented() throws RemoteException;
 
 	public int getYearOfCirculation() throws RemoteException;
+
+	public boolean isSellable() throws RemoteException;
 }
