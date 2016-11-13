@@ -11,7 +11,8 @@ Si cette étape ne marche pas créer un nouveau projet dynamic web
 2. Ajouter les config de la VM pour éclispe, définir les propriétés : `-Djava.rmi.server.codebase` et `-Djava.security.policy`
 Pour définir les propriétés : click droit sur la classe MLVCarsService -> Run As -> Run Configuration -> Arguments -> VM Arguments
 
-```exmaple :
+```
+exmaple :
 -Djava.rmi.server.codebase="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/" -Djava.security.manager 
 -Djava.security.policy="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy"
 ```
