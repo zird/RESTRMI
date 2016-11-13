@@ -13,8 +13,8 @@ Pour définir les propriétés : click droit sur la classe MLVCarsService -> Run
 
 ```
 exmaple :
--Djava.rmi.server.codebase="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/" -Djava.security.manager 
--Djava.security.policy="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy"
+-Djava.rmi.server.codebase="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/" 
+-Djava.security.manager -Djava.security.policy="file:/Users/christophechheang/Documents/cours/rest/project/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy"
 ```
 
 Après avoir créer le web service, si vous testez n'oubliez pas de lancer le serveur et un client pour que des véhicules soit dans la base.
