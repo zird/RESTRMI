@@ -1,6 +1,7 @@
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -30,9 +31,10 @@ public class CarClient {
 				break;
 			}
 
-			Client client1 = new ClientImpl(login, passwd, firstname, lastname, st);
-			carService.addClient(client1);
-			if (false == carService.logIn(client1)) {
+			carService.addClient(new ClientImpl(login, passwd, firstname, lastname, st));
+
+			Client client1 = carService.logIn(login, passwd);
+			if (null != client1) {
 				System.out.println("Login failed");
 
 			}
@@ -44,13 +46,13 @@ public class CarClient {
 			// System.out.println("Login failed");
 			//
 			// }
-
+			Calendar cal = Calendar.getInstance();
+			cal.set(2000, 10, 04);
 			System.out.println(carService.addCar("BC YC", "VW", "POLO", Calendar.getInstance(Locale.FRANCE), 13000));
 			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
 			System.out.println(carService.addCar("EBJ", "OPEL", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
-			System.out.println(carService.addCar("EBZ", "TWINGO", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
-			System.out.println(carService.addCar("EBH", "TWINGO", "ZAFIRA", Calendar.getInstance(Locale.FRANCE), 13000));
-
+			System.out.println(carService.addCar("EBZ", "TWINGO", "ZAFIRA", cal, 13000));
+			System.out.println(carService.addCar("EBH", "TWINGO", "ZAFIRA", Calendar.getInstance(), 13000));
 
 			System.out.println(carService.list());
 
@@ -61,6 +63,19 @@ public class CarClient {
 			System.out.println(carService.search("TWINGO"));
 			System.out.println("\n ----- Recherche de Zafira ------");
 			System.out.println(carService.search("ZAFIRA"));
+
+			System.out.println("\n ----- Recherche SELLABLE------ ######");
+			System.out.println(carService.getSellableCars());
+
+			/* Buy car */
+			Car target = carService.getCarByLicencePlate("EBZ");
+			client1.addCarToBasket(target);
+			List<Car> cars = client1.getBasket();
+
+			System.out.println("buyed : " + carService.purchase(client1, cars));
+
+			System.out.println("\n ----- Recherche SELLABLE------ ######");
+			System.out.println(carService.getSellableCars());
 
 			Scanner scan = new Scanner(System.in);
 			scan.nextLine();
