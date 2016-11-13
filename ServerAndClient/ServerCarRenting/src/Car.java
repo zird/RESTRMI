@@ -5,7 +5,6 @@ import java.util.Calendar;
 
 public interface Car extends Remote, Serializable {
 
-	
 	/**
 	 * Getter of car's license plate
 	 * @return car's license plate
@@ -67,7 +66,7 @@ public interface Car extends Remote, Serializable {
 
 	/**
 	 * Setter for car's available
-	 * @param isAvailable true if ready to rent 
+	 * @param isAvailable true if ready to rent
 	 * @throws RemoteException
 	 */
 	public void setAvailable(boolean isAvailable) throws RemoteException;
@@ -91,6 +90,6 @@ public interface Car extends Remote, Serializable {
 	 * @throws RemoteException
 	 */
 	public int getYearOfCirculation() throws RemoteException;
-	
+
 	public boolean isSellable() throws RemoteException;
 }
