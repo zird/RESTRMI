@@ -1,8 +1,10 @@
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CarImpl implements Serializable, Car {
 
@@ -104,7 +106,31 @@ public class CarImpl implements Serializable, Car {
 
 	@Override
 	public String toString() {
-		return brand + " " + model + " : " + licensePlate + " - " + price;
+		return "Marque : " + brand 
+				+ "\nModele : " +  model  
+				+ "\nPlaque d'immatriculation : " + licensePlate 
+				+ "\nPrix de vente : " + price 
+				+ "\nDisponibilité : " + isAvailable 
+				+ "\n";
+	}
+	
+	@Override
+	public int getYearOfCirculation() throws RemoteException{
+		Calendar a = getCalendar(firstCirculationDate);
+		Calendar b = getCalendar(new Date());
+		System.out.println(firstCirculationDate);
+		int diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR);
+		if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH)
+			|| (a.get(Calendar.MONTH) == b.get(Calendar.MONTH) 
+			&& a.get(Calendar.DATE) > b.get(Calendar.DATE))) {
+			diff--;
+		}
+		return diff;
 	}
 
+	private static Calendar getCalendar(Date date){
+		Calendar cal = Calendar.getInstance(Locale.FRANCE);
+		cal.setTime(date);
+		return cal;
+	}
 }

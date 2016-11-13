@@ -8,6 +8,7 @@ public interface RentInformation extends Remote, Serializable {
 
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException;
 
-	public void addMarkWithComment(Client client, int mark, String note);
+	public void addMarkWithComment(Client client, int mark, String note) throws RemoteException;
 
+	public Car search(String str) throws RemoteException;
 }

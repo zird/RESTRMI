@@ -1,12 +1,12 @@
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 public interface CarsService extends Remote, Serializable {
 
-	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
+	public boolean addCar(String licensePlate, String brand, String model, Calendar firstCirculationDate, double price)
 			throws java.rmi.RemoteException;
 
 	public void removeCar(String licensePlate) throws java.rmi.RemoteException;
@@ -23,4 +23,11 @@ public interface CarsService extends Remote, Serializable {
 
 	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment)
 			throws RemoteException;
+	
+	public List<Car> search(String str) throws RemoteException;
+	
+	public List<Car> sellableCars() throws RemoteException;
+	
+	public Car getCarByLicencePlate(String licencePlate) throws RemoteException;
 }
+

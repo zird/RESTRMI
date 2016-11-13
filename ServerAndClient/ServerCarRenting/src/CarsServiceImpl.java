@@ -80,7 +80,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment) {
+	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment) throws RemoteException {
 		RentInformation rentInfos = cars.get(licensePlate);
 		if (rentInfos == null) {
 			return false;
@@ -90,5 +90,36 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 		return false;
 	}
+
+	@Override
+	public List<Car> search(String str) throws RemoteException {
+		List<RentInformation> searchList = new ArrayList<>(cars.values());
+		List<Car> searchCar = new ArrayList<>();
+		Car car = null;
+		for(RentInformation info : searchList){
+			if((car = info.search(str)) != null){
+				searchCar.add(car);
+			}
+		}
+		return searchCar;
+	}
+	
+	@Override
+	public List<Car> sellableCars() throws RemoteException {
+		List<RentInformation> searchList = new ArrayList<>(cars.values());
+		List<Car> searchCar = new ArrayList<>();
+		for(RentInformation info : searchList){
+			if( info.isSellable() != false){
+				searchCar.add(info.getCar());
+			}
+		}
+		return searchCar;
+	}
+	
+	public Car getCarByLicencePlate(String licencePlate) throws RemoteException{
+		return cars.get(licencePlate).getCar();
+		}
+	
+	
 
 }
