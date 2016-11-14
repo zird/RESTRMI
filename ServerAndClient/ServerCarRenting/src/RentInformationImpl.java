@@ -83,5 +83,22 @@ public class RentInformationImpl implements RentInformation {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public Car search(String str) throws RemoteException{
+		if(car.getBrand().contains(str) || car.getModel().contains(str)){
+			return car;
+		}
+		return null;
+	}
+	
+	public boolean isSellable() throws RemoteException {
+		if(car.getYearOfCirculation() >= 2 /*&& car.hasBeenRented()*/){
+			return true;
+		}
+		return false;
+	}
+	
+	public Car getCar() throws RemoteException{
+		return car;
+	}
 }

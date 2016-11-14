@@ -1,7 +1,7 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean addCar(String licensePlate, String brand, String model, Date firstCirculationDate, double price)
+	public boolean addCar(String licensePlate, String brand, String model, Calendar firstCirculationDate, double price)
 			throws RemoteException {
 		if (cars.containsKey(licensePlate)) {
 			return false;
@@ -57,17 +57,17 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean logIn(Client client) throws RemoteException {
+	public Client logIn(String login, String password) throws RemoteException {
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
 			Client cmp = it.next();
-			if (cmp.equals(client)) {
-				return true;
+			if (cmp.getLogin().equals(login) && cmp.getPassword().equals(password)) {
+				return cmp;
 			}
 		}
-		return false;
+		return null;
 	}
-
+	
 	@Override
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
 		RentInformation rentInfos = cars.get(licensePlate);
@@ -79,16 +79,45 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return rentInfos.returnCar(client, licensePlate);
 	}
 
-	@Override
-	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment) {
-		RentInformation rentInfos = cars.get(licensePlate);
-		if (rentInfos == null) {
-			return false;
-		}
-
-		rentInfos.addMarkWithComment(client, mark, comment);
-
-		return false;
-	}
+	 @Override
+	    public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment) throws RemoteException {
+	        RentInformation rentInfos = cars.get(licensePlate);
+	        if (rentInfos == null) {
+	            return false;
+	        }
+	 
+	        rentInfos.addMarkWithComment(client, mark, comment);
+	 
+	        return false;
+	    }
+	 
+	    @Override
+	    public List<Car> search(String str) throws RemoteException {
+	        List<RentInformation> searchList = new ArrayList<>(cars.values());
+	        List<Car> searchCar = new ArrayList<>();
+	        Car car = null;
+	        for(RentInformation info : searchList){
+	            if((car = info.search(str)) != null){
+	                searchCar.add(car);
+	            }
+	        }
+	        return searchCar;
+	    }
+	    
+	    @Override
+	    public List<Car> sellableCars() throws RemoteException {
+	        List<RentInformation> searchList = new ArrayList<>(cars.values());
+	        List<Car> searchCar = new ArrayList<>();
+	        for(RentInformation info : searchList){
+	            if( info.isSellable() != false){
+	                searchCar.add(info.getCar());
+	            }
+	        }
+	        return searchCar;
+	    }
+	    
+	    public Car getCarByLicencePlate(String licencePlate) throws RemoteException{
+	        return cars.get(licencePlate).getCar();
+	        }
 
 }

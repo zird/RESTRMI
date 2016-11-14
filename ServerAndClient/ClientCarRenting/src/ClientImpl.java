@@ -24,8 +24,8 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	public String getLogin() throws RemoteException {
 		return login;
 	}
-
-	public String getPwd() throws RemoteException {
+	
+	public String getPassword() throws RemoteException {
 		return password;
 	}
 

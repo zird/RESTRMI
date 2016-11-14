@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 public interface Client extends Remote, Serializable {
 
 	public String getLogin() throws RemoteException;
+	
+	public String getPassword() throws RemoteException;
 
 	public String getLastname() throws RemoteException;
 
