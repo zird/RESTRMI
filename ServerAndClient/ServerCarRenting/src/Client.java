@@ -9,8 +9,6 @@ public interface Client extends Remote, Serializable {
 	
 	public String getPassword() throws RemoteException;
 
-	public String getPassword() throws RemoteException;
-
 	public String getLastname() throws RemoteException;
 
 	public String getFirstname() throws RemoteException;

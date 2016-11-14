@@ -12,8 +12,6 @@ public interface Client extends Remote, Serializable {
 	 */
 	public String getLogin() throws RemoteException;
 	
-	public String getPassword() throws RemoteException;
-
 	/**
 	 * Getter for the client's password
 	 * @return client's password
