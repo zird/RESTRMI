@@ -2,20 +2,21 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CarsServiceImpl extends UnicastRemoteObject implements CarsService {
 
 	private static final long serialVersionUID = 1L;
-	private HashMap<String, RentInformation> cars;
+	private ConcurrentMap<String, RentInformation> cars;
 	private Set<Client> clients;
 
 	public CarsServiceImpl() throws RemoteException {
-		cars = new HashMap<>();
+		cars = new ConcurrentHashMap<>();
 		clients = new HashSet<>();
 	}
 
@@ -79,45 +80,78 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return rentInfos.returnCar(client, licensePlate);
 	}
 
-	 @Override
-	    public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment) throws RemoteException {
-	        RentInformation rentInfos = cars.get(licensePlate);
-	        if (rentInfos == null) {
-	            return false;
-	        }
-	 
-	        rentInfos.addMarkWithComment(client, mark, comment);
-	 
-	        return false;
-	    }
-	 
-	    @Override
-	    public List<Car> search(String str) throws RemoteException {
-	        List<RentInformation> searchList = new ArrayList<>(cars.values());
-	        List<Car> searchCar = new ArrayList<>();
-	        Car car = null;
-	        for(RentInformation info : searchList){
-	            if((car = info.search(str)) != null){
-	                searchCar.add(car);
-	            }
-	        }
-	        return searchCar;
-	    }
-	    
-	    @Override
-	    public List<Car> sellableCars() throws RemoteException {
-	        List<RentInformation> searchList = new ArrayList<>(cars.values());
-	        List<Car> searchCar = new ArrayList<>();
-	        for(RentInformation info : searchList){
-	            if( info.isSellable() != false){
-	                searchCar.add(info.getCar());
-	            }
-	        }
-	        return searchCar;
-	    }
-	    
-	    public Car getCarByLicencePlate(String licencePlate) throws RemoteException{
-	        return cars.get(licencePlate).getCar();
-	        }
+	@Override
+	public boolean addMarkWithComment(Client client, String licensePlate, int mark, String comment)
+			throws RemoteException {
+		RentInformation rentInfos = cars.get(licensePlate);
+		if (rentInfos == null) {
+			return false;
+		}
+
+		rentInfos.addMarkWithComment(client, mark, comment);
+
+		return false;
+	}
+
+	@Override
+	public List<Car> search(String str) throws RemoteException {
+		List<RentInformation> searchList = new ArrayList<>(cars.values());
+		List<Car> searchCar = new ArrayList<>();
+		Car car = null;
+		for (RentInformation info : searchList) {
+			if ((car = info.search(str)) != null) {
+				searchCar.add(car);
+			}
+		}
+		return searchCar;
+	}
+
+	@Override
+	public List<Car> getSellableCars() throws RemoteException {
+		List<RentInformation> searchList = new ArrayList<>(cars.values());
+		List<Car> searchCar = new ArrayList<>();
+		for (RentInformation info : searchList) {
+			if (info.isSellable() != false) {
+				searchCar.add(info.getCar());
+			}
+		}
+		return searchCar;
+	}
+
+	@Override
+	public Car getCarByLicensePlate(String licensePlate) throws RemoteException {
+		return cars.get(licensePlate).getCar();
+	}
+
+	@Override
+	public synchronized boolean purchase(Client client, List<Car> cars) throws RemoteException {
+		if (containsCars(cars) && areSellable(cars)) {
+			for (Car c : cars) {
+				String licensePlate = c.getLicensePlate();
+				this.cars.remove(licensePlate);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean areSellable(List<Car> cars) throws RemoteException {
+		for (Car c : cars) {
+			String licensePlate = c.getLicensePlate();
+			if (!this.cars.get(licensePlate).isSellable()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean containsCars(List<Car> cars) throws RemoteException {
+		for (Car c : cars) {
+			if (!this.cars.containsKey(c.getLicensePlate())) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
