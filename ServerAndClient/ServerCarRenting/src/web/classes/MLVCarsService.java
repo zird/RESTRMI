@@ -1,3 +1,4 @@
+package web.classes;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;

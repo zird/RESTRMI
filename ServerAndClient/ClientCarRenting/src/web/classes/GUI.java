@@ -1,3 +1,4 @@
+package web.classes;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
@@ -533,7 +534,7 @@ public class GUI extends Application {
 		Text textModel = new Text(car.getModel());
 		Text textLicense = new Text(car.getLicensePlate());
 		Text textFirstCirculate = new Text(formatter.format(car.getFirstCirculationDate().getTime()));
-		Text textPrice = new Text(car.getPrice() + " €");
+		Text textPrice = new Text(car.getPrice() + " ï¿½");
 		Text textAvailable = new Text(car.isAvailable() ? "Yes":"No");
 		textAvailable.setFill(car.isAvailable() ? Color.GREEN:Color.RED);
 		

@@ -1,3 +1,4 @@
+package web.classes;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -66,7 +67,7 @@ public interface Car extends Remote, Serializable {
 
 	/**
 	 * Setter for car's available
-	 * @param isAvailable true if ready to rent 
+	 * @param isAvailable true if ready to rent
 	 * @throws RemoteException
 	 */
 	public void setAvailable(boolean isAvailable) throws RemoteException;
@@ -82,15 +83,14 @@ public interface Car extends Remote, Serializable {
 	 * Setter for "Car has been rented once"
 	 * @throws RemoteException
 	 */
-
 	public void setHasBeenRented() throws RemoteException;
-
+	
 	/**
 	 * To know how many year the car exist
 	 * @return year of circulation
 	 * @throws RemoteException
 	 */
 	public int getYearOfCirculation() throws RemoteException;
-	
+
 	public boolean isSellable() throws RemoteException;
 }

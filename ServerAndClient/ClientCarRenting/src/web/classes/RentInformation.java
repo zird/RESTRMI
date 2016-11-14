@@ -1,3 +1,4 @@
+package web.classes;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

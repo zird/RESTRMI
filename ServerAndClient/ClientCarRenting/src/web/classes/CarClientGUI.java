@@ -1,3 +1,4 @@
+package web.classes;
 import java.rmi.RMISecurityManager;
 
 @SuppressWarnings("deprecation")

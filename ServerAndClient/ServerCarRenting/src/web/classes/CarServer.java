@@ -1,3 +1,4 @@
+package web.classes;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.util.Calendar;
