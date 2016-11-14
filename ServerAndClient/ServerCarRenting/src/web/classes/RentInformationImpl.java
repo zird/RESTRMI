@@ -14,29 +14,53 @@ public class RentInformationImpl implements RentInformation {
 		this.car = car;
 		waitingQueue = new ArrayList<>();
 	}
-
+	
 	@Override
-	public boolean rent(Client client) throws RemoteException {
+	public RentStatus rent(Client client) throws RemoteException {
 		if (currentRenter == null) {
 			currentRenter = client;
 			currentRenter.notifyRent(car);
 			car.setAvailable(false);
-			return true;
+			return RentStatus.SUCCESS;
 		}
-		addToWaitingQueue(client);
-		return false;
+		if (currentRenter.equals(client)) {
+			return RentStatus.ALREADY_RENTING;
+		}
+		if (true == addToWaitingQueue(client)) {
+			return RentStatus.WAITING_QUEUE;
+		} else {
+			return RentStatus.ALREADY_WAITING_QUEUE;
+		}
+		
 	}
 
-	private void addToWaitingQueue(Client client) throws RemoteException {
+	/**
+	 * Add the client to the waiting queue of the car of this RentInformation
+	 * @param client the client to add to the waiting queue
+	 * @return true if the client was added to the queue, 
+	 * 		   false if the client is already in the queue, 
+	 *   	   in which case it doesn't add the client another time
+	 * @throws RemoteException
+	 */
+	private boolean addToWaitingQueue(Client client) throws RemoteException {
 		if (waitingQueue.isEmpty()) {
 			waitingQueue.add(client);
-		} else {
+			return true;
+		} else if (isAlreadyWaiting(client)) { // if client is already in this waiting queue
+			return false;
+		} else { // if there are already other people waiting
 			int i = 0;
 			while (i < waitingQueue.size() && waitingQueue.get(i).getStatus() == Status.PROFESSOR) {
 				i++;
 			}
-			waitingQueue.add(i, client);
+			waitingQueue.add(i, client); // insert client at index i
+			return true;
 		}
+	}
+	
+	@Override
+	public boolean isAlreadyWaiting(Client client) throws RemoteException {
+		return waitingQueue.contains(client);
 	}
 
 	@Override
@@ -94,5 +118,9 @@ public class RentInformationImpl implements RentInformation {
 
 	public Car getCar() throws RemoteException {
 		return car;
+	}
+	
+	public Client getRenter() throws RemoteException {
+		return currentRenter;
 	}
 }

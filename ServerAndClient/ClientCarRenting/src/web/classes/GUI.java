@@ -13,7 +13,6 @@ import java.util.Locale;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -22,7 +21,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -504,10 +506,32 @@ public class GUI extends Application {
 			
 			/* the titled pane */
 			TitledPane carPane = new TitledPane(car.getBrand() + " " + car.getModel(), new Rectangle(300,400,Color.GRAY));
-			carPane.getStyleClass().add(car.isAvailable()?"success":"danger");
+			refreshCarPaneColor(car, carPane);
 			styleTitledPane(carPane);
-			carPane.setContent(addRentButton(getCarPaneContent(car), car));
+			carPane.setContent(addRentButton(getCarPaneContent(car), car, accordion));
 			accordion.getPanes().add(carPane);
+		}
+	}
+
+	private void refreshCarPaneColor(Car car, TitledPane carPane) throws RemoteException {
+		if (car.isAvailable()) {
+			carPane.getStyleClass().add("success");
+		} else {
+			System.out.println(carsService.getRentStatus(sessionClient, car.getLicensePlate()));
+			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
+			case ALREADY_WAITING_QUEUE:
+				System.out.println("add warning class");
+				carPane.getStyleClass().add("warning");
+				System.out.println(carPane.getStyleClass());
+				break;
+			case ALREADY_RENTING:
+				System.out.println("add danger 1 class");
+				carPane.getStyleClass().add("danger");
+				break;
+			default:
+				System.out.println("add danger 2 class");
+				carPane.getStyleClass().add("danger");
+			}
 		}
 	}
 
@@ -561,24 +585,73 @@ public class GUI extends Application {
 	 * @return the specified grid pane, but with the additional button
 	 * @throws RemoteException 
 	 */
-	private GridPane addRentButton(GridPane carPaneContent, Car car) throws RemoteException {
-		Button btnRent = new Button("Rent this car");
+	private GridPane addRentButton(GridPane carPaneContent, Car car, Accordion accordion) throws RemoteException {
+		Button btnRent = new Button();
 		btnRent.getStyleClass().setAll("button", "warning");
-		carPaneContent.add(btnRent, 3, 1);
 		
-		/* Disabling button if car not available */
-		if (!car.isAvailable()) {
-			btnRent.setDisable(true);
-		}
+		refreshRentButton(car, btnRent);
+		
+		carPaneContent.add(btnRent, 3, 1);
 		
 		/* Event handlers */
 		btnRent.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				System.out.println("clicked on rent");
+				try {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setHeaderText(null);
+					RentStatus rentResult = carsService.rent(sessionClient, car.getLicensePlate());
+					switch(rentResult) {
+					case SUCCESS:
+						alert.setContentText("You have been granted the car : " + car.getBrand() + " " + car.getModel() + ".");
+						break;
+					case WAITING_QUEUE:
+						alert.setAlertType(AlertType.WARNING);
+						alert.setContentText("The car " + car.getBrand() + " " + car.getModel() + " is already in use. You have been put in the waiting queue for this car.");
+						break;
+					case ALREADY_WAITING_QUEUE:
+						alert.setAlertType(AlertType.ERROR);
+						alert.setContentText("You are already queueing up for this car.");
+						break;
+					case ALREADY_RENTING:
+						alert.setAlertType(AlertType.ERROR);
+						alert.setContentText("You are already renting this car.");
+						break;
+					default:
+						alert.setAlertType(AlertType.ERROR);
+						alert.setContentText("The car does not exist. This should not happen.");
+					}
+					refreshRentButton(car, btnRent);
+					refreshAccordion(accordion);
+					alert.showAndWait();
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				} 
 			}
 		});
 		return carPaneContent;
+	}
+
+	private void refreshRentButton(Car car, Button btnRent) throws RemoteException {
+		if (car.isAvailable()) {
+			btnRent.setText("Rent this car now");
+			btnRent.setDisable(false);
+		} else {
+			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
+			case ALREADY_WAITING_QUEUE:
+				System.out.println("already waiting queue");
+				btnRent.setText("Already queueing for this car");
+				btnRent.setDisable(true);
+				break;
+			case ALREADY_RENTING:
+				btnRent.setText("Already renting this car");
+				btnRent.setDisable(true);
+				break;
+			default:
+				btnRent.setText("Queue up to rent this car");
+				btnRent.setDisable(false);
+			}
+		}
 	}
 	
 	/**

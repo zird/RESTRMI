@@ -38,15 +38,26 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean rent(Client client, String licensePlate) throws RemoteException {
+	public RentStatus rent(Client client, String licensePlate) throws RemoteException {
 		if (!cars.containsKey(licensePlate)) {
-			return false;
+			return RentStatus.ERROR;
 		}
 		RentInformation toRent = cars.get(licensePlate);
 
 		return toRent.rent(client);
 	}
 
+	@Override
+	public RentStatus getRentStatus(Client client, String licensePlate) throws RemoteException {
+		RentInformation rentInfo = cars.get(licensePlate);
+		if (rentInfo.isAlreadyWaiting(client)) {
+			return RentStatus.ALREADY_WAITING_QUEUE;
+		} else if (rentInfo.getRenter().equals(client)) {
+			return RentStatus.ALREADY_RENTING;
+		}
+		return RentStatus.SUCCESS;
+	}
+	
 	@Override
 	public List<RentInformation> list() throws RemoteException {
 		// return cars.values().stream().collect(Collectors.toList());

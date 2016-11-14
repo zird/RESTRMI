@@ -25,17 +25,33 @@ public interface CarsService extends Remote, Serializable {
 	 * @param licensePlate car's licensePlate
 	 * @throws java.rmi.RemoteException
 	 */
-	public void removeCar(String licensePlate) throws java.rmi.RemoteException;
+	public void removeCar(String licensePlate) throws RemoteException;
 
 	/**
 	 * A client wants to rent a car
 	 * @param client Client who will rent the car
 	 * @param licensePlate car's license plate
-	 * @return True if the client can have the car, false if the client is put in the queue or the car doesn't exists
+	 * @return SUCCESS if the renter has changed,
+	 * 		   WAITING_QUEUE if put in queue,
+	 *         ALREADY_WAITING_QUEUE if renting has failed because already
+	 *         waiting for this car,
+	 *         ALREADY_RENTING if the client is already renting the car,
+	 *         ERROR if the car doesn't exist
 	 * @throws java.rmi.RemoteException
 	 */
-	public boolean rent(Client client, String licensePlate) throws java.rmi.RemoteException;
+	public RentStatus rent(Client client, String licensePlate) throws RemoteException;
 
+	/**
+	 * Get the renting status of the specified car by the specified client
+	 * @param client the client to check the renting status for
+	 * @param licensePlate the license plate of the car to check
+	 * @return ALREADY_WAITING_QUEUE if the client is currently in the waiting queue for the car,
+	 * 		   ALREADY_RENTING if the client is currently renting the car,
+	 * 		   SUCCESS if the car is available and the client is allowed to rent it
+	 * @throws RemoteException
+	 */
+	public RentStatus getRentStatus(Client client, String licensePlate) throws RemoteException;
+	
 	/**
 	 * Return all RentInformation of the hashmap
 	 * @return List of all RentInformation

@@ -8,11 +8,22 @@ public interface RentInformation extends Remote, Serializable {
 	/**
 	 * A new client takes the car
 	 * @param client new client
-	 * @return true if the renter has changed, false if put in queue
+	 * @return SUCCESS if the renter has changed,
+	 * 		   WAITING_QUEUE if put in queue,
+	 *         ALREADY_WAITING_QUEUE if renting has failed because already
+	 *         waiting for this car,
+	 *         ALREADY_RENTING if the client is already renting the car
 	 * @throws RemoteException
 	 */
-	public boolean rent(Client client) throws RemoteException;
+	public RentStatus rent(Client client) throws RemoteException;
 
+	/**
+	 * Tells if the client is already in the waiting list for the car
+	 * @param client the client to test
+	 * @return true if the client is already waiting for the car, false otherwise
+	 */
+	public boolean isAlreadyWaiting(Client client);
+	
 	/**
 	 * Return car and assign a new client if possible
 	 * @param client Renter of the car
@@ -52,4 +63,11 @@ public interface RentInformation extends Remote, Serializable {
 	 * @throws RemoteException
 	 */
 	public Car getCar() throws RemoteException;
+	
+	/**
+	 * Return current renter
+	 * @return client
+	 * @throws RemoteException
+	 */
+	public Client getRenter() throws RemoteException;
 }
