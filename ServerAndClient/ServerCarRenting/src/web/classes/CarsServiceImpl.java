@@ -1,4 +1,5 @@
 package web.classes;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -58,33 +59,20 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		}
 		return RentStatus.SUCCESS;
 	}
-	
+
 	@Override
 	public List<RentInformation> list() throws RemoteException {
 		// return cars.values().stream().collect(Collectors.toList());
 		return new ArrayList<RentInformation>(cars.values());
 	}
-	
+
 	@Override
 	public List<RentInformation> listClientWaiting(Client client) throws RemoteException {
 		// take all RentInfos, filter those where the client is in waiting queue
 		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
-		for(Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
-			RentInformation rentInfo = ite.next();
-			if (rentInfo.isAlreadyWaiting(client)) {
-				ite.remove();
-			}
-		}
-		return list;
-	}
-	
-	@Override
-	public List<RentInformation> listClientRenting(Client client) throws RemoteException {
-		// take all RentInfos, filter those where the client is in waiting queue
-		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
 		for (Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
 			RentInformation rentInfo = ite.next();
-			if (null != rentInfo.getRenter() && false == rentInfo.getRenter().equals(client)) {
+			if (!rentInfo.isAlreadyWaiting(client)) {
 				ite.remove();
 			}
 		}
@@ -92,7 +80,21 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException {
+	public List<RentInformation> listClientRenting(Client client) throws RemoteException {
+		// take all RentInfos, filter those where the client is in waiting queue
+		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
+		for (Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
+			RentInformation rentInfo = ite.next();
+			if (null == rentInfo.getRenter() || false == rentInfo.getRenter().equals(client)) {
+				ite.remove();
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public boolean addClient(String login, String password, String firstname, String lastname, Status status)
+			throws RemoteException {
 		return clients.add(new ClientImpl(login, password, firstname, lastname, status));
 	}
 
@@ -107,7 +109,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
 		RentInformation rentInfos = cars.get(licensePlate);

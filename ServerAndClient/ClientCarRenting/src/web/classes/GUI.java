@@ -124,6 +124,8 @@ public class GUI extends Application {
 		}
 	}
 	
+	/* Scene initializations **************************************************/
+	
 	private void sceneAuthInit(Stage stage, Scene scene) {
 		/* Basic initialization */
 		GridPane pane = (GridPane) scene.getRoot();
@@ -348,18 +350,27 @@ public class GUI extends Application {
 		tab1.setClosable(false);
 		tab2.setClosable(false);
 		tab3.setClosable(false);
-		// tab.setContent(new Rectangle(200, 200, Color.LIGHTSTEELBLUE));
 		tabPane.getTabs().addAll(tab1, tab2, tab3);
 		// Listener on tab selection
 		tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
 			if (newTab.equals(tab1)) { // if tab "My current cars"
-
+				try {
+					currentTab = TabName.RENTING_CARS;
+					tab1.setContent(getTabContent());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
 			} else if (newTab.equals(tab2)) { // if tab "Waiting list"
-
+				try {
+					currentTab = TabName.WAITING_CARS;
+					tab2.setContent(getTabContent());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
 			} else { // if tab "All cars"
 				try {
 					currentTab = TabName.ALL_CARS;
-					tab3.setContent(getTabAllCars());
+					tab3.setContent(getTabContent());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
@@ -388,13 +399,13 @@ public class GUI extends Application {
 	 * @return the content of the tab listing all cars
 	 * @throws RemoteException
 	 */
-	private ScrollPane getTabAllCars() throws RemoteException {
+	private ScrollPane getTabContent() throws RemoteException {
 		ScrollPane scrollPane = new ScrollPane();
 		styleScrollPane(scrollPane);
 		Accordion accordion = new Accordion();
 		styleAccordion(accordion);
 		
-		refreshAccordion(accordion, currentTab);
+		refreshAccordion(accordion);
 		scrollPane.setContent(accordion);
 		
 		return scrollPane;
@@ -494,7 +505,7 @@ public class GUI extends Application {
 						textFail.setVisible(false); // hide error msg
 						resetAddCarForm(fieldBrand, fieldModel, fieldLicense, fieldPrice, datePicker);
 						parentToCollapse.setExpanded(false); // collapse pane
-						refreshAccordion(accordion, currentTab);
+						refreshAccordion(accordion);
 					} else {
 						textFail.setVisible(true); // show error msg
 						System.out.println("Adding car FAILURE");
@@ -521,11 +532,11 @@ public class GUI extends Application {
 	 * @param accordion Accordion containing the cars
 	 * @throws RemoteException
 	 */
-	private void refreshAccordion(Accordion accordion, TabName tabName) throws RemoteException {
-		updateTabList(tabName); // update the list of RentInfos for the tab
+	private void refreshAccordion(Accordion accordion) throws RemoteException {
+		updateTabList(currentTab); // update the list of RentInfos for the tab
 		accordion.getPanes().clear();
-		fillAccordionWithCars(accordion, tabs.get(tabName));
-		if (tabName == TabName.ALL_CARS) {
+		fillAccordionWithCars(accordion, tabs.get(currentTab));
+		if (currentTab == TabName.ALL_CARS) {
 			addNewCarPane(accordion);
 		}
 	}
@@ -553,7 +564,7 @@ public class GUI extends Application {
 		if (car.isAvailable()) {
 			carPane.getStyleClass().add("success");
 		} else {
-			System.out.println(carsService.getRentStatus(sessionClient, car.getLicensePlate()));
+			carsService.getRentStatus(sessionClient, car.getLicensePlate());
 			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
 			case ALREADY_WAITING_QUEUE:
 				carPane.getStyleClass().add("warning");
@@ -657,7 +668,7 @@ public class GUI extends Application {
 						alert.setAlertType(AlertType.ERROR);
 						alert.setContentText("The car does not exist. This should not happen.");
 					}
-					refreshAccordion(accordion, currentTab);
+					refreshAccordion(accordion);
 					alert.showAndWait();
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
@@ -678,7 +689,7 @@ public class GUI extends Application {
 						alert.setContentText("Error returning the car.");
 					}
 					alert.showAndWait();
-					refreshAccordion(accordion, currentTab);
+					refreshAccordion(accordion);
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
