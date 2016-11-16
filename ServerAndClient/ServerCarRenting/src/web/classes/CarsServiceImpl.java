@@ -1,8 +1,11 @@
 package web.classes;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -16,10 +19,12 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	private static final long serialVersionUID = 1L;
 	private ConcurrentMap<String, RentInformation> cars;
 	private Set<Client> clients;
+	private Set<String> loggedLogins;
 
 	public CarsServiceImpl() throws RemoteException {
 		cars = new ConcurrentHashMap<>();
 		clients = new HashSet<>();
+		loggedLogins = new HashSet<>();
 	}
 
 	@Override
@@ -58,41 +63,58 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		}
 		return RentStatus.SUCCESS;
 	}
-	
+
+	private List<RentInformation> sortByBrand(List<RentInformation> list) {
+		Collections.sort(list, new Comparator<RentInformation>() {
+		    public int compare(RentInformation x, RentInformation y) {
+		        try {
+					return x.getCar().getBrand().compareToIgnoreCase(y.getCar().getBrand());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+				return 0;
+		    }
+		});
+		return list;
+	}
+
 	@Override
 	public List<RentInformation> list() throws RemoteException {
-		// return cars.values().stream().collect(Collectors.toList());
-		return new ArrayList<RentInformation>(cars.values());
+		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
+		// sort alphabetically
+		return sortByBrand(list);
+		//return new ArrayList<RentInformation>(cars.values());
 	}
-	
+
 	@Override
 	public List<RentInformation> listClientWaiting(Client client) throws RemoteException {
 		// take all RentInfos, filter those where the client is in waiting queue
 		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
-		for(Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
+		for (Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
 			RentInformation rentInfo = ite.next();
-			if (rentInfo.isAlreadyWaiting(client)) {
+			if (!rentInfo.isAlreadyWaiting(client)) {
 				ite.remove();
 			}
 		}
-		return list;
+		return sortByBrand(list);
 	}
-	
+
 	@Override
 	public List<RentInformation> listClientRenting(Client client) throws RemoteException {
 		// take all RentInfos, filter those where the client is in waiting queue
 		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
 		for (Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
 			RentInformation rentInfo = ite.next();
-			if (null != rentInfo.getRenter() && false == rentInfo.getRenter().equals(client)) {
+			if (null == rentInfo.getRenter() || false == rentInfo.getRenter().equals(client)) {
 				ite.remove();
 			}
 		}
-		return list;
+		return sortByBrand(list);
 	}
 
 	@Override
-	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException {
+	public boolean addClient(String login, String password, String firstname, String lastname, Status status)
+			throws RemoteException {
 		return clients.add(new ClientImpl(login, password, firstname, lastname, status));
 	}
 
@@ -100,14 +122,20 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	public Client logIn(String login, String password) throws RemoteException {
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
-			Client cmp = it.next();
-			if (cmp.getLogin().equals(login) && cmp.getPassword().equals(password)) {
-				return cmp;
+			Client iteClient = it.next();
+			if (!loggedLogins.contains(login) && iteClient.getLogin().equals(login) && iteClient.getPassword().equals(password)) {
+				loggedLogins.add(login);
+				return iteClient;
 			}
 		}
 		return null;
 	}
 	
+	@Override
+	public boolean logOut(String login) throws RemoteException {
+		return loggedLogins.remove(login);
+	}
+
 	@Override
 	public boolean returnCar(Client client, String licensePlate) throws RemoteException {
 		RentInformation rentInfos = cars.get(licensePlate);

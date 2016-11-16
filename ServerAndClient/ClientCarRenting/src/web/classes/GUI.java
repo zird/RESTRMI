@@ -96,6 +96,7 @@ public class GUI extends Application {
 	@Override
 	public void stop() {
 		System.out.println("The GUI was closed.");
+		performLogout();
 		Platform.exit();
 		System.exit(0); // might move this somewhere else
 	}
@@ -123,6 +124,8 @@ public class GUI extends Application {
 			break;
 		}
 	}
+	
+	/* Scene initializations **************************************************/
 	
 	private void sceneAuthInit(Stage stage, Scene scene) {
 		/* Basic initialization */
@@ -342,24 +345,38 @@ public class GUI extends Application {
 
 		/* Tabs ********************************/
 		TabPane tabPane = new TabPane();
-		Tab tab1 = new Tab("My current cars");
-		Tab tab2 = new Tab("My waiting list");
-		Tab tab3 = new Tab("All cars");
+		Tab tab1 = new Tab("All cars");
+		Tab tab2 = new Tab("My current cars");
+		Tab tab3 = new Tab("My waiting list");
 		tab1.setClosable(false);
 		tab2.setClosable(false);
 		tab3.setClosable(false);
-		// tab.setContent(new Rectangle(200, 200, Color.LIGHTSTEELBLUE));
 		tabPane.getTabs().addAll(tab1, tab2, tab3);
+		
+		// set content of default tab : tab1
+		currentTab = TabName.ALL_CARS;
+		tab1.setContent(getTabContent());
+		
 		// Listener on tab selection
 		tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
-			if (newTab.equals(tab1)) { // if tab "My current cars"
-
-			} else if (newTab.equals(tab2)) { // if tab "Waiting list"
-
-			} else { // if tab "All cars"
+			if (newTab.equals(tab1)) { // if tab "All cars"
 				try {
 					currentTab = TabName.ALL_CARS;
-					tab3.setContent(getTabAllCars());
+					tab1.setContent(getTabContent());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+			} else if (newTab.equals(tab2)) {  // if tab "My current cars"
+				try {
+					currentTab = TabName.RENTING_CARS;
+					tab2.setContent(getTabContent());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+			} else { // if tab "Waiting list"
+				try {
+					currentTab = TabName.WAITING_CARS;
+					tab3.setContent(getTabContent());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
@@ -374,27 +391,39 @@ public class GUI extends Application {
 		btnLogout.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				sessionClient = null;
-				currentTab = TabName.NONE;
+				performLogout();
 				stage.setScene(scenes.get("authentication"));
 				scenes.remove("tabs");
 				scenes.put("tabs", new Scene(new BorderPane(), appWidth, appHeight));
 			}
+
 		});
 	}
-
+	
+	private void performLogout() {
+		currentTab = TabName.NONE;
+		try {
+			if (null != sessionClient) {
+				carsService.logOut(sessionClient.getLogin());
+			}
+		} catch (RemoteException e) {
+			System.err.println("Exception : " + e);
+		}
+		sessionClient = null;
+	}
+	
 	/**
 	 * Get the content of the tab listing all cars
 	 * @return the content of the tab listing all cars
 	 * @throws RemoteException
 	 */
-	private ScrollPane getTabAllCars() throws RemoteException {
+	private ScrollPane getTabContent() throws RemoteException {
 		ScrollPane scrollPane = new ScrollPane();
 		styleScrollPane(scrollPane);
 		Accordion accordion = new Accordion();
 		styleAccordion(accordion);
 		
-		refreshAccordion(accordion, currentTab);
+		refreshAccordion(accordion);
 		scrollPane.setContent(accordion);
 		
 		return scrollPane;
@@ -494,7 +523,7 @@ public class GUI extends Application {
 						textFail.setVisible(false); // hide error msg
 						resetAddCarForm(fieldBrand, fieldModel, fieldLicense, fieldPrice, datePicker);
 						parentToCollapse.setExpanded(false); // collapse pane
-						refreshAccordion(accordion, currentTab);
+						refreshAccordion(accordion);
 					} else {
 						textFail.setVisible(true); // show error msg
 						System.out.println("Adding car FAILURE");
@@ -517,20 +546,6 @@ public class GUI extends Application {
 	}
 
 	/**
-	 * Refresh the Accordion object showing the list of cars
-	 * @param accordion Accordion containing the cars
-	 * @throws RemoteException
-	 */
-	private void refreshAccordion(Accordion accordion, TabName tabName) throws RemoteException {
-		updateTabList(tabName); // update the list of RentInfos for the tab
-		accordion.getPanes().clear();
-		fillAccordionWithCars(accordion, tabs.get(tabName));
-		if (tabName == TabName.ALL_CARS) {
-			addNewCarPane(accordion);
-		}
-	}
-	
-	/**
 	 * Fills the accordion with cars
 	 * @param accordion Accordion containing the cars
 	 * @param rentInfoList 
@@ -548,26 +563,7 @@ public class GUI extends Application {
 			accordion.getPanes().add(carPane);
 		}
 	}
-
-	private void refreshCarPaneColor(Car car, TitledPane carPane) throws RemoteException {
-		if (car.isAvailable()) {
-			carPane.getStyleClass().add("success");
-		} else {
-			System.out.println(carsService.getRentStatus(sessionClient, car.getLicensePlate()));
-			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
-			case ALREADY_WAITING_QUEUE:
-				carPane.getStyleClass().add("warning");
-				break;
-			case ALREADY_RENTING:
-				carPane.getStyleClass().add("info");
-				break;
-			default:
-				carPane.getStyleClass().add("danger");
-			}
-		}
-	}
 	
-
 	/**
 	 * Get the content for the car pane, containing the details of the car
 	 * @param car the car contained in the car pane
@@ -657,7 +653,7 @@ public class GUI extends Application {
 						alert.setAlertType(AlertType.ERROR);
 						alert.setContentText("The car does not exist. This should not happen.");
 					}
-					refreshAccordion(accordion, currentTab);
+					refreshAccordion(accordion);
 					alert.showAndWait();
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
@@ -678,7 +674,7 @@ public class GUI extends Application {
 						alert.setContentText("Error returning the car.");
 					}
 					alert.showAndWait();
-					refreshAccordion(accordion, currentTab);
+					refreshAccordion(accordion);
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
@@ -688,6 +684,35 @@ public class GUI extends Application {
 		return carPaneContent;
 	}
 
+	/* Refreshing stuff *******************************************************/
+	
+	private void refreshCarPaneColor(Car car, TitledPane carPane) throws RemoteException {
+		if (car.isAvailable()) {
+			carPane.getStyleClass().add("success");
+		} else {
+			carsService.getRentStatus(sessionClient, car.getLicensePlate());
+			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
+			case ALREADY_WAITING_QUEUE:
+				carPane.getStyleClass().add("warning");
+				break;
+			case ALREADY_RENTING:
+				carPane.getStyleClass().add("info");
+				break;
+			default:
+				carPane.getStyleClass().add("danger");
+			}
+		}
+	}
+
+	private void refreshAccordion(Accordion accordion) throws RemoteException {
+		updateTabList(currentTab); // update the list of RentInfos for the tab
+		accordion.getPanes().clear();
+		fillAccordionWithCars(accordion, tabs.get(currentTab));
+		if (currentTab == TabName.ALL_CARS) {
+			addNewCarPane(accordion);
+		}
+	}
+	
 	private void refreshCarPaneButtons(Car car, Button btnRent, Button btnReturn) throws RemoteException {
 		if (car.isAvailable()) {
 			btnRent.setText("Rent this car now");
@@ -696,7 +721,6 @@ public class GUI extends Application {
 		} else {
 			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
 			case ALREADY_WAITING_QUEUE:
-				System.out.println("already waiting queue");
 				btnRent.setText("Already queueing for this car");
 				btnRent.setDisable(true);	
 				btnReturn.setVisible(false);
@@ -713,7 +737,6 @@ public class GUI extends Application {
 			}
 		}
 	}
-	
 
 	/* Styling methods *********************************************************/
 	
@@ -751,13 +774,7 @@ public class GUI extends Application {
 	 * @throws RemoteException
 	 */
 	public void start() throws RemoteException {
-		/* CLIENTS FOR DEMO PURPOSES */
-		carsService.addClient("a", "a", "John", "Doe", Status.STUDENT);
-		carsService.addClient("b", "b", "Jane", "Doe", Status.PROFESSOR);
-
 		launch();
 	}
 	
-
-
 }
