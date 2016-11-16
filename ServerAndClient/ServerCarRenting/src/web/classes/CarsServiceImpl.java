@@ -65,8 +65,8 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public boolean addClient(Client client) throws RemoteException {
-		return clients.add(client);
+	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException {
+		return clients.add(new ClientImpl(login, password, firstname, lastname, status));
 	}
 
 	@Override

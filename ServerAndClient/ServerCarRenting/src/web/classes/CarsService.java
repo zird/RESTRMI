@@ -75,7 +75,7 @@ public interface CarsService extends Remote, Serializable {
 	 * @return true if created 
 	 * @throws RemoteException
 	 */
-	public boolean addClient(Client client) throws RemoteException;
+	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException;
 
 	/**
 	 * A Client returned the car
