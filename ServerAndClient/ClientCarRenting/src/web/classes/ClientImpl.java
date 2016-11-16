@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 public class ClientImpl extends UnicastRemoteObject implements Client {
 
 	private static final long serialVersionUID = 1L;
@@ -74,12 +77,18 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
 	@Override
 	public void notifyRent(Car car) throws RemoteException {
-		System.out.println("you have been granted the car : " + car);
+		/*Alert alert = new Alert(AlertType.INFORMATION, "You have been granted the car : " + car.getBrand() + " " + car.getModel() + ".");
+		alert.setHeaderText(null);
+		alert.showAndWait();*/
+		System.out.println("Notification from server : granted car "+ car.getModel());
 	}
 
 	@Override
 	public void notifyReturn(Car car) throws RemoteException {
-		System.out.println("you have returned the car : " + car);
+		/*Alert alert = new Alert(AlertType.INFORMATION, "You have returned the car : " + car.getBrand() + " " + car.getModel() + ".");
+		alert.setHeaderText(null);
+		alert.showAndWait();*/
+		System.out.println("Notification from server : returned car "+ car.getModel());
 	}
 
 	@Override

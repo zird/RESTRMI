@@ -22,7 +22,7 @@ public interface RentInformation extends Remote, Serializable {
 	 * @param client the client to test
 	 * @return true if the client is already waiting for the car, false otherwise
 	 */
-	public boolean isAlreadyWaiting(Client client);
+	public boolean isAlreadyWaiting(Client client) throws RemoteException;
 	
 	/**
 	 * Return car and assign a new client if possible

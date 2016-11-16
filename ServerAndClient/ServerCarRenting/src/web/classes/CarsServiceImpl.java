@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 public class CarsServiceImpl extends UnicastRemoteObject implements CarsService {
 
@@ -62,6 +63,32 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	public List<RentInformation> list() throws RemoteException {
 		// return cars.values().stream().collect(Collectors.toList());
 		return new ArrayList<RentInformation>(cars.values());
+	}
+	
+	@Override
+	public List<RentInformation> listClientWaiting(Client client) throws RemoteException {
+		// take all RentInfos, filter those where the client is in waiting queue
+		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
+		for(Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
+			RentInformation rentInfo = ite.next();
+			if (rentInfo.isAlreadyWaiting(client)) {
+				ite.remove();
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<RentInformation> listClientRenting(Client client) throws RemoteException {
+		// take all RentInfos, filter those where the client is in waiting queue
+		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
+		for (Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
+			RentInformation rentInfo = ite.next();
+			if (null != rentInfo.getRenter() && false == rentInfo.getRenter().equals(client)) {
+				ite.remove();
+			}
+		}
+		return list;
 	}
 
 	@Override
