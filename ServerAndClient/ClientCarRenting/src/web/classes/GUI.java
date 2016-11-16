@@ -344,32 +344,37 @@ public class GUI extends Application {
 
 		/* Tabs ********************************/
 		TabPane tabPane = new TabPane();
-		Tab tab1 = new Tab("My current cars");
-		Tab tab2 = new Tab("My waiting list");
-		Tab tab3 = new Tab("All cars");
+		Tab tab1 = new Tab("All cars");
+		Tab tab2 = new Tab("My current cars");
+		Tab tab3 = new Tab("My waiting list");
 		tab1.setClosable(false);
 		tab2.setClosable(false);
 		tab3.setClosable(false);
 		tabPane.getTabs().addAll(tab1, tab2, tab3);
+		
+		// set content of default tab : tab1
+		currentTab = TabName.ALL_CARS;
+		tab1.setContent(getTabContent());
+		
 		// Listener on tab selection
 		tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
-			if (newTab.equals(tab1)) { // if tab "My current cars"
+			if (newTab.equals(tab1)) { // if tab "All cars"
 				try {
-					currentTab = TabName.RENTING_CARS;
+					currentTab = TabName.ALL_CARS;
 					tab1.setContent(getTabContent());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
-			} else if (newTab.equals(tab2)) { // if tab "Waiting list"
+			} else if (newTab.equals(tab2)) {  // if tab "My current cars"
 				try {
-					currentTab = TabName.WAITING_CARS;
+					currentTab = TabName.RENTING_CARS;
 					tab2.setContent(getTabContent());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
-			} else { // if tab "All cars"
+			} else { // if tab "Waiting list"
 				try {
-					currentTab = TabName.ALL_CARS;
+					currentTab = TabName.WAITING_CARS;
 					tab3.setContent(getTabContent());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
@@ -707,7 +712,6 @@ public class GUI extends Application {
 		} else {
 			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
 			case ALREADY_WAITING_QUEUE:
-				System.out.println("already waiting queue");
 				btnRent.setText("Already queueing for this car");
 				btnRent.setDisable(true);	
 				btnReturn.setVisible(false);
