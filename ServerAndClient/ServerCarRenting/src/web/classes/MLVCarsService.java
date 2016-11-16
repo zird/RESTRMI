@@ -35,24 +35,23 @@ public class MLVCarsService {
 		if (carsService == null) {
 			return "LE CAR SERVICE EST NULL";
 		}
-		StringBuilder sb = new StringBuilder("<p id=\"newpanier\">");
+		StringBuilder sb = new StringBuilder("<tr><th>Marque</th><th>Modèle</th><th>Plaque d'immatriculation</th><th>Date de premiere circulation</th><th>Prix</th><th>Action</th></tr>");
 		for (Car car : carsService.getSellableCars()) {
-			sb.append("<tr><th>" + car.getBrand() + "</th><th>" + car.getModel() + "</th><th>" + car.getLicensePlate() + "</th><th>" + car.getYearOfCirculation() + "</th><th>" + car.getPrice() + "</th><th> <button class=\"addtobasket\" type=\"button\" id=\""
+			sb.append("<tr><th>" + car.getBrand() + "</th><th>" + car.getModel() + "</th><th>" + car.getLicensePlate() + "</th><th>" + car.getYearOfCirculation() + "</th><th class=\"montant\">" + car.getPrice() + "</th><th> <button class=\"addtobasket\" type=\"button\" id=\""
 						+ car.getLicensePlate() + "\">Ajouter au panier</button></th></tr>");
 			};
-		sb.append("</p>");
 		return sb.toString();
 	}
 
-	public void purchaseBasket(String strLicensePlates) throws RemoteException{
-		System.out.println("LicencePlates : " + strLicensePlates);
+	public String purchaseBasket(String strLicensePlates) throws RemoteException{
 		List<String> licensePlates = Arrays.asList(strLicensePlates.split(","));
+
 		List<Car> cars = new ArrayList<>();
 		for(String licensePlate : licensePlates){
-			System.out.println(licensePlate.substring(0, 2)+" "+licensePlate.substring(2, 5)+" "+licensePlate.substring(5,7));
 			cars.add(carsService.getCarByLicensePlate(licensePlate.substring(0, 2)+" "+licensePlate.substring(2, 5)+" "+licensePlate.substring(5,7)));
 		}
 		carsService.purchase(cars);
+		return this.list();
 	}
 	
 }

@@ -37,8 +37,10 @@ public class CarClient {
 				st = Status.PROFESSOR;
 				break;
 			}
-
-			carService.addClient(new ClientImpl(login, passwd, firstname, lastname, st));
+			System.out.println(login);
+			System.out.println("ok");
+			carService.addClient(login, passwd, firstname, lastname, st);
+			System.out.println("ok");
 			Client client1 = carService.logIn(login, passwd);
 			if (null != client1) {
 				System.out.println("Login failed");
