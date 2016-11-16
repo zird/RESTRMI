@@ -2,9 +2,9 @@
 	<description>
 		Server for car renting service
 	</description>
-	<property name ="srcdir" location="src/web/" />
+	<property name ="srcdir" location="src/" />
 	<property name ="builddir" location="build/" />
-	<property name ="targetdir" location="./" />
+	<property name ="targetdir" location="build/" />
 	<property name ="mainclass" value="web.classes.CarServer" />
 
 	<target name="init">
@@ -12,13 +12,15 @@
 		<mkdir dir="${builddir}" />
 	</target>
 
-	<target name="compile" depends="init" description="compile the source">
-		<javac srcdir="${srcdir}" destdir="${builddir}" includeantruntime="false" />
+	<target name="compile-server" depends="init" description="compile the source">
+		<javac srcdir="${srcdir}/web" destdir="${builddir}" includeantruntime="false" />
+		<copy todir="${targetdir}" >
+			<file name="${srcdir}/grant.policy" />
+		</copy>
 	</target>
 
-	<target name="jar" depends="compile" description="generate the jar">
+	<target name="jar" depends="compile-server" description="generate the jar">
 		<jar jarfile="${targetdir}/${ant.project.name}.jar" basedir="${builddir}">
-			<fileset file="grant.policy" />
 			<manifest>
 				<attribute name="Main-Class" value="${mainclass}"/>
 			</manifest>
