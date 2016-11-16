@@ -78,7 +78,7 @@ public class CarClient {
 			client1.addCarToBasket(target);
 			List<Car> cars = client1.getBasket();
 
-			System.out.println("buyed : " + carService.purchase(client1, cars));
+			System.out.println("buyed : " + carService.purchase(cars));
 
 			System.out.println("\n ----- Recherche SELLABLE------ ######");
 			System.out.println(carService.getSellableCars());
