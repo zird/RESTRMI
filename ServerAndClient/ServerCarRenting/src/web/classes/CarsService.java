@@ -60,6 +60,22 @@ public interface CarsService extends Remote, Serializable {
 	public List<RentInformation> list() throws RemoteException;
 
 	/**
+	 * Return all RentInformation where the client is in the waiting queue
+	 * @param client the client to filter the list for
+	 * @return List of all RentInformation where the client is in the waiting queue
+	 * @throws RemoteException
+	 */
+	public List<RentInformation> listClientWaiting(Client client) throws RemoteException;
+	
+	/**
+	 * Return all RentInformation where the client is renting the car
+	 * @param client the client to filter the list for
+	 * @return List of all RentInformation where the client is renting the car
+	 * @throws RemoteException
+	 */
+	public List<RentInformation> listClientRenting(Client client) throws RemoteException;
+	
+	/**
 	 * Allow to login to the server
 	 * @param login Login
 	 * @param password Password

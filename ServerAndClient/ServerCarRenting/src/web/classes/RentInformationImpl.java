@@ -87,6 +87,7 @@ public class RentInformationImpl implements RentInformation {
 				return true;
 			} else {
 				car.setAvailable(true);
+				currentRenter = null;
 			}
 		} catch (RemoteException e) {
 			currentRenter = returner;

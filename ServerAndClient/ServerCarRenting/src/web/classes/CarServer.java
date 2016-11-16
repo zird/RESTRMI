@@ -30,9 +30,6 @@ public class CarServer {
 	
 	public static void main(String[] args) {
 		try {
-			
-			String codebase = "file:../../ClientCarRenting/bin/";
-			System.setProperty("java.rmi.server.codebase", codebase);
 			System.setProperty("java.security.policy", "grant.policy");
 			System.setSecurityManager(new RMISecurityManager());
 			CarsService service = new CarsServiceImpl();

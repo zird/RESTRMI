@@ -4,10 +4,12 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javafx.application.Application;
@@ -15,6 +17,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -24,7 +27,6 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -55,21 +57,21 @@ public class GUI extends Application {
 	/* Related to the app */
 	private Client sessionClient = null;
 	private CarsService carsService;
-
+	/* Related to tabs */
+	private enum TabName { NONE, ALL_CARS, WAITING_CARS, RENTING_CARS; }
+	private TabName currentTab = TabName.NONE;
+	private HashMap<TabName, List<RentInformation>> tabs = new HashMap<>();
+	
+	
 	/**
 	 * Constructs the GUI.
 	 * @throws Exception
 	 */
 	public GUI() throws Exception {
 		carsService = (CarsService) Naming.lookup("rmi://localhost:1099/CarsService");
+		initTabsLists();
 	}
 
-	@Override
-	public void stop() {
-		System.out.println("The GUI was closed.");
-		Platform.exit();
-		System.exit(0); // might move this somewhere else
-	}
 
 	@Override
 	public void start(Stage stage) throws RemoteException {
@@ -91,17 +93,41 @@ public class GUI extends Application {
 		stage.show();
 	}
 
-	private void initGridPane(GridPane pane) {
-		pane.setAlignment(Pos.CENTER);
-		pane.setHgap(10);
-		pane.setVgap(10);
-		pane.setPadding(new Insets(25, 25, 25, 25));
+	@Override
+	public void stop() {
+		System.out.println("The GUI was closed.");
+		Platform.exit();
+		System.exit(0); // might move this somewhere else
 	}
-
+	
+	/* Tabs methods ***********************************************************/
+	
+	private void initTabsLists() throws RemoteException {
+		tabs.put(TabName.RENTING_CARS, carsService.listClientRenting(sessionClient));
+		tabs.put(TabName.WAITING_CARS, carsService.listClientWaiting(sessionClient));
+		tabs.put(TabName.ALL_CARS, carsService.list());
+	}
+	
+	private void updateTabList(TabName tabName) throws RemoteException {
+		switch(tabName) {
+		case RENTING_CARS:
+			tabs.put(tabName, carsService.listClientRenting(sessionClient));
+			break;
+		case WAITING_CARS:
+			tabs.put(tabName, carsService.listClientWaiting(sessionClient));
+			break;
+		case ALL_CARS:
+			tabs.put(tabName, carsService.list());
+			break;
+		default:
+			break;
+		}
+	}
+	
 	private void sceneAuthInit(Stage stage, Scene scene) {
 		/* Basic initialization */
 		GridPane pane = (GridPane) scene.getRoot();
-		initGridPane(pane);
+		styleGridPane(pane);
 		scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
 		stage.setTitle("Authentication");
 
@@ -181,7 +207,7 @@ public class GUI extends Application {
 	private void sceneRegisterInit(Stage stage, Scene scene) {
 		/* Basic initialization */
 		GridPane pane = (GridPane) scene.getRoot();
-		initGridPane(pane);
+		styleGridPane(pane);
 		scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
 		stage.setTitle("Register");
 
@@ -264,9 +290,9 @@ public class GUI extends Application {
 					status = Status.OUTSIDER;
 				}
 				try {
-					Client newClient = new ClientImpl(fieldLogin.getText(), fieldPassword.getText(),
-							fieldFirstName.getText(), fieldLastName.getText(), status);
-					if (false == carsService.addClient(newClient)) {
+					
+					if (false == carsService.addClient(fieldLogin.getText(), fieldPassword.getText(),
+							fieldFirstName.getText(), fieldLastName.getText(), status)) {
 						resultText.setVisible(true);
 						System.out.println("Registering FAILED : already exists");
 					} else {
@@ -326,13 +352,13 @@ public class GUI extends Application {
 		tabPane.getTabs().addAll(tab1, tab2, tab3);
 		// Listener on tab selection
 		tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
-			System.err.println("Selected tab : " + newTab.getText());
 			if (newTab.equals(tab1)) { // if tab "My current cars"
 
 			} else if (newTab.equals(tab2)) { // if tab "Waiting list"
 
 			} else { // if tab "All cars"
 				try {
+					currentTab = TabName.ALL_CARS;
 					tab3.setContent(getTabAllCars());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
@@ -349,6 +375,7 @@ public class GUI extends Application {
 			@Override
 			public void handle(ActionEvent t) {
 				sessionClient = null;
+				currentTab = TabName.NONE;
 				stage.setScene(scenes.get("authentication"));
 				scenes.remove("tabs");
 				scenes.put("tabs", new Scene(new BorderPane(), appWidth, appHeight));
@@ -363,29 +390,33 @@ public class GUI extends Application {
 	 */
 	private ScrollPane getTabAllCars() throws RemoteException {
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
-		scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-		scrollPane.setStyle("-fx-unit-increment:3");
-		scrollPane.setStyle("-fx-block-increment:100");
+		styleScrollPane(scrollPane);
 		Accordion accordion = new Accordion();
-		accordion.setStyle("-fx-background-color: white;");
-		accordion.setPrefWidth(appWidth-10);
-		accordion.setPrefHeight(appHeight);
+		styleAccordion(accordion);
 		
-		/* form to add a new car */
-		TitledPane newCarPane = new TitledPane("Add a new car...", new Rectangle(300,400,Color.GRAY));
-		newCarPane.getStyleClass().add("primary");
-		styleTitledPane(newCarPane);
-		
-		newCarPane.setContent(getNewCarPaneContent(newCarPane, accordion));
-		
-		accordion.getPanes().add(newCarPane);
-		
-		fillAccordionWithCars(accordion);
-		
+		refreshAccordion(accordion, currentTab);
 		scrollPane.setContent(accordion);
 		
 		return scrollPane;
+	}
+
+	/**
+	 * Add the pane containing the form to add a new car, in the specified Accordion object
+	 * @param accordion
+	 * @throws RemoteException
+	 */
+	private void addNewCarPane(Accordion accordion) throws RemoteException {
+		TitledPane newCarPane = getNewCarPane(accordion);
+		accordion.getPanes().add(0, newCarPane);
+	}
+
+	private TitledPane getNewCarPane(Accordion accordion) throws RemoteException {
+		TitledPane newCarPane = new TitledPane("Add a new car...", new Rectangle(300,400,Color.GRAY));
+		styleTitledPane(newCarPane);
+		
+		GridPane newCarPaneContent = getNewCarPaneContent(newCarPane, accordion);
+		newCarPane.setContent(newCarPaneContent);
+		return newCarPane;
 	}
 
 	/**
@@ -458,12 +489,12 @@ public class GUI extends Application {
 			public void handle(ActionEvent t) {
 				System.out.println("Adding a car...");
 				try {
-					if (true == carsService.addCar(fieldLicense.getText(), fieldBrand.getText(), fieldModel.getText(), datePickerResult, Double.parseDouble(fieldPrice.getText())) ) {
+					if (true == carsService.addCar(fieldLicense.getText().toUpperCase(), fieldBrand.getText().toUpperCase(), fieldModel.getText().toUpperCase(), datePickerResult, Double.parseDouble(fieldPrice.getText())) ) {
 						System.out.println("Adding car SUCCESS");
 						textFail.setVisible(false); // hide error msg
 						resetAddCarForm(fieldBrand, fieldModel, fieldLicense, fieldPrice, datePicker);
 						parentToCollapse.setExpanded(false); // collapse pane
-						refreshAccordion(accordion);
+						refreshAccordion(accordion, currentTab);
 					} else {
 						textFail.setVisible(true); // show error msg
 						System.out.println("Adding car FAILURE");
@@ -486,29 +517,34 @@ public class GUI extends Application {
 	}
 
 	/**
-	 * Refresh the list of cars
+	 * Refresh the Accordion object showing the list of cars
 	 * @param accordion Accordion containing the cars
 	 * @throws RemoteException
 	 */
-	private void refreshAccordion(Accordion accordion) throws RemoteException {
+	private void refreshAccordion(Accordion accordion, TabName tabName) throws RemoteException {
+		updateTabList(tabName); // update the list of RentInfos for the tab
 		accordion.getPanes().clear();
-		fillAccordionWithCars(accordion);
+		fillAccordionWithCars(accordion, tabs.get(tabName));
+		if (tabName == TabName.ALL_CARS) {
+			addNewCarPane(accordion);
+		}
 	}
 	
 	/**
 	 * Fills the accordion with cars
 	 * @param accordion Accordion containing the cars
+	 * @param rentInfoList 
 	 * @throws RemoteException
 	 */
-	private void fillAccordionWithCars(Accordion accordion) throws RemoteException {
-		for(RentInformation rentInfo : carsService.list()) {
+	private void fillAccordionWithCars(Accordion accordion, List<RentInformation> rentInfoList) throws RemoteException {
+		for(RentInformation rentInfo : rentInfoList) {
 			Car car = rentInfo.getCar();
 			
 			/* the titled pane */
 			TitledPane carPane = new TitledPane(car.getBrand() + " " + car.getModel(), new Rectangle(300,400,Color.GRAY));
 			refreshCarPaneColor(car, carPane);
 			styleTitledPane(carPane);
-			carPane.setContent(addRentButton(getCarPaneContent(car), car, accordion));
+			carPane.setContent(addCarPaneButtons(getCarPaneContent(car), car, accordion));
 			accordion.getPanes().add(carPane);
 		}
 	}
@@ -520,20 +556,17 @@ public class GUI extends Application {
 			System.out.println(carsService.getRentStatus(sessionClient, car.getLicensePlate()));
 			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
 			case ALREADY_WAITING_QUEUE:
-				System.out.println("add warning class");
 				carPane.getStyleClass().add("warning");
-				System.out.println(carPane.getStyleClass());
 				break;
 			case ALREADY_RENTING:
-				System.out.println("add danger 1 class");
-				carPane.getStyleClass().add("danger");
+				carPane.getStyleClass().add("info");
 				break;
 			default:
-				System.out.println("add danger 2 class");
 				carPane.getStyleClass().add("danger");
 			}
 		}
 	}
+	
 
 	/**
 	 * Get the content for the car pane, containing the details of the car
@@ -558,7 +591,7 @@ public class GUI extends Application {
 		Text textModel = new Text(car.getModel());
 		Text textLicense = new Text(car.getLicensePlate());
 		Text textFirstCirculate = new Text(formatter.format(car.getFirstCirculationDate().getTime()));
-		Text textPrice = new Text(car.getPrice() + " �");
+		Text textPrice = new Text(car.getPrice() + " EUR");
 		Text textAvailable = new Text(car.isAvailable() ? "Yes":"No");
 		textAvailable.setFill(car.isAvailable() ? Color.GREEN:Color.RED);
 		
@@ -579,19 +612,22 @@ public class GUI extends Application {
 	}
 	
 	/**
-	 * Add a button to rent the car in the pane with the details of the car
+	 * Add a button to rent the car, and to return it, in the pane with the details of the car
 	 * @param carPaneContent the pane containing the details of the car
 	 * @param car the car contained in the car pane
 	 * @return the specified grid pane, but with the additional button
 	 * @throws RemoteException 
 	 */
-	private GridPane addRentButton(GridPane carPaneContent, Car car, Accordion accordion) throws RemoteException {
+	private GridPane addCarPaneButtons(GridPane carPaneContent, Car car, Accordion accordion) throws RemoteException {
 		Button btnRent = new Button();
+		Button btnReturn = new Button("Return this car");
 		btnRent.getStyleClass().setAll("button", "warning");
+		btnReturn.getStyleClass().setAll("button","primary");
 		
-		refreshRentButton(car, btnRent);
+		refreshCarPaneButtons(car, btnRent, btnReturn);
 		
 		carPaneContent.add(btnRent, 3, 1);
+		carPaneContent.add(btnReturn, 4, 1);
 		
 		/* Event handlers */
 		btnRent.setOnAction(new EventHandler<ActionEvent>() {
@@ -621,49 +657,93 @@ public class GUI extends Application {
 						alert.setAlertType(AlertType.ERROR);
 						alert.setContentText("The car does not exist. This should not happen.");
 					}
-					refreshRentButton(car, btnRent);
-					refreshAccordion(accordion);
+					refreshAccordion(accordion, currentTab);
 					alert.showAndWait();
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				} 
 			}
 		});
+		
+		btnReturn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setHeaderText(null);
+					if (true == carsService.returnCar(sessionClient, car.getLicensePlate())) {
+						alert.setContentText("You have returned the car : " + car.getBrand() + " " + car.getModel() + ".");
+					} else {
+						alert.setAlertType(AlertType.ERROR);
+						alert.setContentText("Error returning the car.");
+					}
+					alert.showAndWait();
+					refreshAccordion(accordion, currentTab);
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+			}
+		});
+		
 		return carPaneContent;
 	}
 
-	private void refreshRentButton(Car car, Button btnRent) throws RemoteException {
+	private void refreshCarPaneButtons(Car car, Button btnRent, Button btnReturn) throws RemoteException {
 		if (car.isAvailable()) {
 			btnRent.setText("Rent this car now");
 			btnRent.setDisable(false);
+			btnReturn.setVisible(false);
 		} else {
 			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
 			case ALREADY_WAITING_QUEUE:
 				System.out.println("already waiting queue");
 				btnRent.setText("Already queueing for this car");
-				btnRent.setDisable(true);
+				btnRent.setDisable(true);	
+				btnReturn.setVisible(false);
 				break;
 			case ALREADY_RENTING:
 				btnRent.setText("Already renting this car");
 				btnRent.setDisable(true);
+				btnReturn.setVisible(true);
 				break;
 			default:
 				btnRent.setText("Queue up to rent this car");
 				btnRent.setDisable(false);
+				btnReturn.setVisible(false);
 			}
 		}
 	}
 	
-	/**
-	 * Put some style on the titled pane (representing a car)
-	 * @param pane The pane to style
-	 * @throws RemoteException
-	 */
+
+	/* Styling methods *********************************************************/
+	
+	private void styleGridPane(GridPane pane) {
+		pane.setAlignment(Pos.CENTER);
+		pane.setHgap(10);
+		pane.setVgap(10);
+		pane.setPadding(new Insets(25, 25, 25, 25));
+	}
+	
 	private void styleTitledPane(TitledPane pane) throws RemoteException {
+		pane.getStyleClass().add("primary");
 		pane.setPrefWidth(appWidth-35);
 		pane.setPrefHeight(80);
 		pane.setStyle("-fx-padding: 20 20 0 20; -fx-font-size:20;");
 	}
+	
+	private void styleAccordion(Accordion accordion) {
+		accordion.setStyle("-fx-background-color: white;");
+		accordion.setPrefWidth(appWidth-10);
+		accordion.setPrefHeight(appHeight);
+	}
+
+	private void styleScrollPane(ScrollPane scrollPane) {
+		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		scrollPane.setStyle("-fx-unit-increment:3");
+		scrollPane.setStyle("-fx-block-increment:100");
+	}
+	
 	
 	/**
 	 * Start the GUI. Open authentication window.
@@ -672,12 +752,12 @@ public class GUI extends Application {
 	 */
 	public void start() throws RemoteException {
 		/* CLIENTS FOR DEMO PURPOSES */
-		Client demoClient = new ClientImpl("a", "a", "John", "Doe", Status.STUDENT);
-		Client demoClient2 = new ClientImpl("b", "b", "Jane", "Doe", Status.PROFESSOR);
-		carsService.addClient(demoClient);
-		carsService.addClient(demoClient2);
-		
+		carsService.addClient("a", "a", "John", "Doe", Status.STUDENT);
+		carsService.addClient("b", "b", "Jane", "Doe", Status.PROFESSOR);
+
 		launch();
 	}
+	
+
 
 }

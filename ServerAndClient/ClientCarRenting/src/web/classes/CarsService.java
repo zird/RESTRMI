@@ -60,6 +60,22 @@ public interface CarsService extends Remote, Serializable {
 	public List<RentInformation> list() throws RemoteException;
 
 	/**
+	 * Return all RentInformation where the client is in the waiting queue
+	 * @param client the client to filter the list for
+	 * @return List of all RentInformation where the client is in the waiting queue
+	 * @throws RemoteException
+	 */
+	public List<RentInformation> listClientWaiting(Client client) throws RemoteException;
+	
+	/**
+	 * Return all RentInformation where the client is renting the car
+	 * @param client the client to filter the list for
+	 * @return List of all RentInformation where the client is renting the car
+	 * @throws RemoteException
+	 */
+	public List<RentInformation> listClientRenting(Client client) throws RemoteException;
+	
+	/**
 	 * Allow to login to the server
 	 * @param login Login
 	 * @param password Password
@@ -75,8 +91,8 @@ public interface CarsService extends Remote, Serializable {
 	 * @return true if created 
 	 * @throws RemoteException
 	 */
-	public boolean addClient(Client client) throws RemoteException;
-
+	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException;
+	
 	/**
 	 * A Client returned the car
 	 * @param client Client
@@ -124,7 +140,6 @@ public interface CarsService extends Remote, Serializable {
 
 	/**
 	 * A client want to purchase car(s)
-	 * @param client client 
 	 * @param cars list of car
 	 * @return true if all cars is purchasable
 	 * @throws RemoteException
