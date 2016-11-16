@@ -18,7 +18,7 @@ public interface CarsService extends Remote, Serializable {
 	 * @throws java.rmi.RemoteException
 	 */
 	public boolean addCar(String licensePlate, String brand, String model, Calendar firstCirculationDate, double price)
-			throws java.rmi.RemoteException;
+			throws RemoteException;
 
 	/**
 	 * Remove car with @param licensePlate
@@ -147,10 +147,10 @@ public interface CarsService extends Remote, Serializable {
 
 	/**
 	 * A client want to purchase car(s)
-	 * @param client client 
 	 * @param cars list of car
+	 * @param amount amount of money available to make the transaction
 	 * @return true if all cars is purchasable
 	 * @throws RemoteException
 	 */
-	public boolean purchase(List<Car> cars) throws RemoteException;
+	public boolean purchase(List<Car> cars, double amount) throws RemoteException;
 }

@@ -43,15 +43,15 @@ public class MLVCarsService {
 		return sb.toString();
 	}
 
-	public String purchaseBasket(String strLicensePlates) throws RemoteException{
+	public boolean purchaseBasket(String strLicensePlates, double amount) throws RemoteException {
 		List<String> licensePlates = Arrays.asList(strLicensePlates.split(","));
 
 		List<Car> cars = new ArrayList<>();
 		for(String licensePlate : licensePlates){
 			cars.add(carsService.getCarByLicensePlate(licensePlate.substring(0, 2)+" "+licensePlate.substring(2, 5)+" "+licensePlate.substring(5,7)));
 		}
-		carsService.purchase(cars);
-		return this.list();
+
+		return carsService.purchase(cars, amount);
 	}
 	
 }

@@ -80,7 +80,7 @@ public class CarClient {
 			client1.addCarToBasket(target);
 			List<Car> cars = client1.getBasket();
 
-			System.out.println("buyed : " + carService.purchase(cars));
+			System.out.println("buyed : " + carService.purchase(cars,50000));
 
 			System.out.println("\n ----- Recherche SELLABLE------ ######");
 			System.out.println(carService.getSellableCars());
