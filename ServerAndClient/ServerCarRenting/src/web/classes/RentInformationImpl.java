@@ -3,7 +3,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentInformationImpl<T> implements RentInformation {
+public class RentInformationImpl implements RentInformation {
 
 	private static final long serialVersionUID = 1L;
 	private Client currentRenter = null;
