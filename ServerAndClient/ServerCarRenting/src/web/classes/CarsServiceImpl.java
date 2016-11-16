@@ -19,10 +19,12 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	private static final long serialVersionUID = 1L;
 	private ConcurrentMap<String, RentInformation> cars;
 	private Set<Client> clients;
+	private Set<String> loggedLogins;
 
 	public CarsServiceImpl() throws RemoteException {
 		cars = new ConcurrentHashMap<>();
 		clients = new HashSet<>();
+		loggedLogins = new HashSet<>();
 	}
 
 	@Override
@@ -120,12 +122,18 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	public Client logIn(String login, String password) throws RemoteException {
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
-			Client cmp = it.next();
-			if (cmp.getLogin().equals(login) && cmp.getPassword().equals(password)) {
-				return cmp;
+			Client iteClient = it.next();
+			if (!loggedLogins.contains(login) && iteClient.getLogin().equals(login) && iteClient.getPassword().equals(password)) {
+				loggedLogins.add(login);
+				return iteClient;
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean logOut(String login) throws RemoteException {
+		return loggedLogins.remove(login);
 	}
 
 	@Override

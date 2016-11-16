@@ -79,11 +79,18 @@ public interface CarsService extends Remote, Serializable {
 	 * Allow to login to the server
 	 * @param login Login
 	 * @param password Password
-	 * @return Client which is assign to
+	 * @return the newly logged Client object, null if identity mismatch or already logged in
 	 * @throws RemoteException
 	 */
 	public Client logIn(String login, String password) throws RemoteException;
 
+	/**
+	 * Log the client out of the server. The client is specified by login
+	 * @param login Login
+	 * @return true if successfully logged out, false otherwise
+	 * @throws RemoteException
+	 */
+	public boolean logOut(String login) throws RemoteException;
 
 	/**
 	 * Create a client

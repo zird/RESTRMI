@@ -96,6 +96,7 @@ public class GUI extends Application {
 	@Override
 	public void stop() {
 		System.out.println("The GUI was closed.");
+		performLogout();
 		Platform.exit();
 		System.exit(0); // might move this somewhere else
 	}
@@ -390,15 +391,27 @@ public class GUI extends Application {
 		btnLogout.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				sessionClient = null;
-				currentTab = TabName.NONE;
+				performLogout();
 				stage.setScene(scenes.get("authentication"));
 				scenes.remove("tabs");
 				scenes.put("tabs", new Scene(new BorderPane(), appWidth, appHeight));
 			}
+
 		});
 	}
-
+	
+	private void performLogout() {
+		currentTab = TabName.NONE;
+		try {
+			if (null != sessionClient) {
+				carsService.logOut(sessionClient.getLogin());
+			}
+		} catch (RemoteException e) {
+			System.err.println("Exception : " + e);
+		}
+		sessionClient = null;
+	}
+	
 	/**
 	 * Get the content of the tab listing all cars
 	 * @return the content of the tab listing all cars
@@ -533,20 +546,6 @@ public class GUI extends Application {
 	}
 
 	/**
-	 * Refresh the Accordion object showing the list of cars
-	 * @param accordion Accordion containing the cars
-	 * @throws RemoteException
-	 */
-	private void refreshAccordion(Accordion accordion) throws RemoteException {
-		updateTabList(currentTab); // update the list of RentInfos for the tab
-		accordion.getPanes().clear();
-		fillAccordionWithCars(accordion, tabs.get(currentTab));
-		if (currentTab == TabName.ALL_CARS) {
-			addNewCarPane(accordion);
-		}
-	}
-	
-	/**
 	 * Fills the accordion with cars
 	 * @param accordion Accordion containing the cars
 	 * @param rentInfoList 
@@ -562,24 +561,6 @@ public class GUI extends Application {
 			styleTitledPane(carPane);
 			carPane.setContent(addCarPaneButtons(getCarPaneContent(car), car, accordion));
 			accordion.getPanes().add(carPane);
-		}
-	}
-
-	private void refreshCarPaneColor(Car car, TitledPane carPane) throws RemoteException {
-		if (car.isAvailable()) {
-			carPane.getStyleClass().add("success");
-		} else {
-			carsService.getRentStatus(sessionClient, car.getLicensePlate());
-			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
-			case ALREADY_WAITING_QUEUE:
-				carPane.getStyleClass().add("warning");
-				break;
-			case ALREADY_RENTING:
-				carPane.getStyleClass().add("info");
-				break;
-			default:
-				carPane.getStyleClass().add("danger");
-			}
 		}
 	}
 	
@@ -703,6 +684,35 @@ public class GUI extends Application {
 		return carPaneContent;
 	}
 
+	/* Refreshing stuff *******************************************************/
+	
+	private void refreshCarPaneColor(Car car, TitledPane carPane) throws RemoteException {
+		if (car.isAvailable()) {
+			carPane.getStyleClass().add("success");
+		} else {
+			carsService.getRentStatus(sessionClient, car.getLicensePlate());
+			switch(carsService.getRentStatus(sessionClient, car.getLicensePlate())) {
+			case ALREADY_WAITING_QUEUE:
+				carPane.getStyleClass().add("warning");
+				break;
+			case ALREADY_RENTING:
+				carPane.getStyleClass().add("info");
+				break;
+			default:
+				carPane.getStyleClass().add("danger");
+			}
+		}
+	}
+
+	private void refreshAccordion(Accordion accordion) throws RemoteException {
+		updateTabList(currentTab); // update the list of RentInfos for the tab
+		accordion.getPanes().clear();
+		fillAccordionWithCars(accordion, tabs.get(currentTab));
+		if (currentTab == TabName.ALL_CARS) {
+			addNewCarPane(accordion);
+		}
+	}
+	
 	private void refreshCarPaneButtons(Car car, Button btnRent, Button btnReturn) throws RemoteException {
 		if (car.isAvailable()) {
 			btnRent.setText("Rent this car now");
@@ -727,7 +737,6 @@ public class GUI extends Application {
 			}
 		}
 	}
-	
 
 	/* Styling methods *********************************************************/
 	
@@ -765,13 +774,7 @@ public class GUI extends Application {
 	 * @throws RemoteException
 	 */
 	public void start() throws RemoteException {
-		/* CLIENTS FOR DEMO PURPOSES */
-		carsService.addClient("a", "a", "John", "Doe", Status.STUDENT);
-		carsService.addClient("b", "b", "Jane", "Doe", Status.PROFESSOR);
-
 		launch();
 	}
 	
-
-
 }

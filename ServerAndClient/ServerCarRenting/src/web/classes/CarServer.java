@@ -35,6 +35,9 @@ public class CarServer {
 			CarsService service = new CarsServiceImpl();
 			Naming.rebind("rmi://localhost:1099/CarsService", service);
 			
+			/* CLIENTS FOR DEMO PURPOSES */
+			service.addClient("a", "a", "John", "Doe", Status.STUDENT);
+			service.addClient("b", "b", "Jane", "Doe", Status.PROFESSOR);
 			
 			/* OBJECTS FOR DEMONSTRATION */
 			service.addCar("AB 234 DE", "VOLKSWAGEN", "POLO", getRandomCalendar(), getRandomPrice());

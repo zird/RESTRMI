@@ -25,7 +25,7 @@ public interface CarsService extends Remote, Serializable {
 	 * @param licensePlate car's licensePlate
 	 * @throws java.rmi.RemoteException
 	 */
-	public void removeCar(String licensePlate) throws java.rmi.RemoteException;
+	public void removeCar(String licensePlate) throws RemoteException;
 
 	/**
 	 * A client wants to rent a car
@@ -39,7 +39,7 @@ public interface CarsService extends Remote, Serializable {
 	 *         ERROR if the car doesn't exist
 	 * @throws java.rmi.RemoteException
 	 */
-	public RentStatus rent(Client client, String licensePlate) throws java.rmi.RemoteException;
+	public RentStatus rent(Client client, String licensePlate) throws RemoteException;
 
 	/**
 	 * Get the renting status of the specified car by the specified client
@@ -79,11 +79,18 @@ public interface CarsService extends Remote, Serializable {
 	 * Allow to login to the server
 	 * @param login Login
 	 * @param password Password
-	 * @return Client which is assign to
+	 * @return the newly logged Client object, null if identity mismatch or already logged in
 	 * @throws RemoteException
 	 */
 	public Client logIn(String login, String password) throws RemoteException;
 
+	/**
+	 * Log the client out of the server. The client is specified by login
+	 * @param login Login
+	 * @return true if successfully logged out, false otherwise
+	 * @throws RemoteException
+	 */
+	public boolean logOut(String login) throws RemoteException;
 
 	/**
 	 * Create a client
@@ -92,7 +99,7 @@ public interface CarsService extends Remote, Serializable {
 	 * @throws RemoteException
 	 */
 	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException;
-	
+
 	/**
 	 * A Client returned the car
 	 * @param client Client
@@ -140,6 +147,7 @@ public interface CarsService extends Remote, Serializable {
 
 	/**
 	 * A client want to purchase car(s)
+	 * @param client client 
 	 * @param cars list of car
 	 * @return true if all cars is purchasable
 	 * @throws RemoteException
