@@ -19,7 +19,6 @@ public class CarClientGUI {
 
 		GUI GUI = new GUI();
 		GUI.start(); // open authentication window
-
 	}
 
 	private static void usage() {

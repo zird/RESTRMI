@@ -41,6 +41,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -331,6 +332,7 @@ public class GUI extends Application {
 
 		/* Identity + Logout button ************/
 		HBox identityHBox = new HBox(40);
+		HBox buttonsBox = new HBox(5);
 		identityHBox.setPadding(new Insets(15, 15, 15, 40));
 		Text textIdentity;
 		if (null != sessionClient) {
@@ -341,7 +343,10 @@ public class GUI extends Application {
 		textIdentity.setFont(Font.font("Arial", FontWeight.NORMAL, 25));
 		Button btnLogout = new Button("Logout");
 		btnLogout.getStyleClass().setAll("button", "danger", "sm");
-		identityHBox.getChildren().addAll(textIdentity, btnLogout);
+		Button btnRefresh = new Button("Refresh");
+		btnRefresh.getStyleClass().setAll("button", "info", "sm");
+		buttonsBox.getChildren().addAll(btnLogout, btnRefresh);
+		identityHBox.getChildren().addAll(textIdentity, buttonsBox);
 
 		/* Tabs ********************************/
 		TabPane tabPane = new TabPane();
@@ -398,6 +403,32 @@ public class GUI extends Application {
 			}
 
 		});
+		
+		btnRefresh.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent t) {
+				if (currentTab == TabName.ALL_CARS) { // if tab "All cars"
+					try {
+						tab1.setContent(getTabContent());
+					} catch (RemoteException e) {
+						System.err.println("Exception : " + e);
+					}
+				} else if (currentTab == TabName.RENTING_CARS) {  // if tab "My current cars"
+					try {
+						tab2.setContent(getTabContent());
+					} catch (RemoteException e) {
+						System.err.println("Exception : " + e);
+					}
+				} else { // if tab "Waiting list"
+					try {
+						tab3.setContent(getTabContent());
+					} catch (RemoteException e) {
+						System.err.println("Exception : " + e);
+					}
+				}
+			}
+
+		});
 	}
 	
 	private void performLogout() {
@@ -422,9 +453,28 @@ public class GUI extends Application {
 		styleScrollPane(scrollPane);
 		Accordion accordion = new Accordion();
 		styleAccordion(accordion);
+		updateTabList(currentTab); // update the list of RentInfos for the tab
 		
-		refreshAccordion(accordion);
-		scrollPane.setContent(accordion);
+		if (tabs.get(currentTab).isEmpty()) {
+			Text message = new Text("The list is empty.");
+			Text message2 = new Text("Check all cars to rent a car !");
+			message.setFont(Font.font("Arial", FontWeight.NORMAL, 60));
+			message2.setFont(Font.font("Arial", FontWeight.NORMAL, 40));
+			message.setFill(Color.gray(0.5,0.2));
+			message2.setFill(Color.gray(0.5,0.2));
+			VBox vbox = new VBox();
+			vbox.getChildren().addAll(message, message2);
+			vbox.setAlignment(Pos.CENTER);
+			BorderPane emptyListBox = new BorderPane();
+			emptyListBox.setPrefWidth(appWidth);
+			emptyListBox.setPrefHeight(appHeight-105);
+			emptyListBox.setStyle("-fx-background-color:white;");
+			emptyListBox.setCenter(vbox);
+			scrollPane.setContent(emptyListBox);
+		} else {
+			refreshAccordion(accordion);
+			scrollPane.setContent(accordion);
+		}
 		
 		return scrollPane;
 	}
@@ -766,8 +816,7 @@ public class GUI extends Application {
 		scrollPane.setStyle("-fx-unit-increment:3");
 		scrollPane.setStyle("-fx-block-increment:100");
 	}
-	
-	
+
 	/**
 	 * Start the GUI. Open authentication window.
 	 * 
@@ -776,5 +825,5 @@ public class GUI extends Application {
 	public void start() throws RemoteException {
 		launch();
 	}
-	
+
 }
