@@ -4,6 +4,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +37,9 @@ public class MLVCarsService {
 			return "LE CAR SERVICE EST NULL";
 		}
 		StringBuilder sb = new StringBuilder("<tr><th>Marque</th><th>Modèle</th><th>Plaque d'immatriculation</th><th>Date de premiere circulation</th><th>Prix</th><th>Action</th></tr>");
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 		for (Car car : carsService.getSellableCars()) {
-			sb.append("<tr><th>" + car.getBrand() + "</th><th>" + car.getModel() + "</th><th>" + car.getLicensePlate() + "</th><th>" + car.getYearOfCirculation() + "</th><th class=\"montant\">" + car.getPrice() + "</th><th> <button class=\"addtobasket\" type=\"button\" id=\""
+			sb.append("<tr><th>" + car.getBrand() + "</th><th>" + car.getModel() + "</th><th>" + car.getLicensePlate() + "</th><th>" + format1.format(car.getFirstCirculationDate().getTime())+ "</th><th class=\"montant\">" + car.getPrice() + "</th><th> <button class=\"addtobasket\" type=\"button\" id=\""
 						+ car.getLicensePlate() + "\">Ajouter au panier</button></th></tr>");
 			};
 		return sb.toString();
