@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -60,10 +62,26 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return RentStatus.SUCCESS;
 	}
 
+	private List<RentInformation> sortByBrand(List<RentInformation> list) {
+		Collections.sort(list, new Comparator<RentInformation>() {
+		    public int compare(RentInformation x, RentInformation y) {
+		        try {
+					return x.getCar().getBrand().compareToIgnoreCase(y.getCar().getBrand());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+				return 0;
+		    }
+		});
+		return list;
+	}
+
 	@Override
 	public List<RentInformation> list() throws RemoteException {
-		// return cars.values().stream().collect(Collectors.toList());
-		return new ArrayList<RentInformation>(cars.values());
+		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
+		// sort alphabetically
+		return sortByBrand(list);
+		//return new ArrayList<RentInformation>(cars.values());
 	}
 
 	@Override
@@ -76,7 +94,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 				ite.remove();
 			}
 		}
-		return list;
+		return sortByBrand(list);
 	}
 
 	@Override
@@ -89,7 +107,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 				ite.remove();
 			}
 		}
-		return list;
+		return sortByBrand(list);
 	}
 
 	@Override

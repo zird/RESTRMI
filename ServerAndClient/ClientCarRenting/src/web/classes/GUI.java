@@ -583,7 +583,6 @@ public class GUI extends Application {
 		}
 	}
 	
-
 	/**
 	 * Get the content for the car pane, containing the details of the car
 	 * @param car the car contained in the car pane
