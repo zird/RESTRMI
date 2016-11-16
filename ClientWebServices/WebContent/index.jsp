@@ -86,14 +86,22 @@
 			})
 		});
 		
-		$("#purchaseBasket").click(function(){
+		
+		$("#purchaseBasket").on("click",function() {
 			var id = this.id;
+			var cars = document.getElementsByClassName("panier");
+			var output = "";
+			console.log(cars[0].innerHTML);
+			for (var i = 0; i<cars.length-1; i++){
+			    output = output.concat(((cars[i].innerHTML).concat(",")).replace(/\s/g, ''));
+			}
+			 output = output.concat((cars[i].innerHTML).replace(/\s/g, ''));
 			$.ajax({
 				type : "get",
 				url : "Basket", //this is my servlet
-				data : "action=" + id,
+				data : "action=" + id + "&cars=" + output,
 				success : function(msg) {
-					$("#tosell").html();
+					$("#panier").html(msg);
 				}
 			})
 		});

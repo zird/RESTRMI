@@ -21,6 +21,7 @@ public class CarClient {
 			System.setProperty("java.security.policy", "grant.policy");
 			System.setSecurityManager(new RMISecurityManager());
 			CarsService carService = (CarsService) Naming.lookup("rmi://localhost:1099/CarsService");
+
 			String login = args[0];
 			String passwd = args[1];
 			String firstname = args[2];
@@ -37,8 +38,7 @@ public class CarClient {
 				break;
 			}
 
-			carService.addClient(login, passwd, firstname, lastname, st);
-
+			carService.addClient(new ClientImpl(login, passwd, firstname, lastname, st));
 			Client client1 = carService.logIn(login, passwd);
 			if (null != client1) {
 				System.out.println("Login failed");
