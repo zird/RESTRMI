@@ -31,6 +31,7 @@ import org.tempuri.ConverterSoap;
 public class MLVServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Set<String> basket = new HashSet<>();
+	private double moneyAvailable;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -46,6 +47,7 @@ public class MLVServlet extends HttpServlet {
 				"file:/Users/simrene/git/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy");
 
 		System.setSecurityManager(new RMISecurityManager());
+		moneyAvailable = 3000.00;
 	}
 
 	/**
@@ -97,14 +99,14 @@ public class MLVServlet extends HttpServlet {
 			return;
 		}
 		String strCar = request.getParameter("cars");
-		URL urlPurchase = new URL("http://localhost:8080/ServerCarRenting/services/MLVCarsService?method=purchaseBasket&strLicensePlates="+ strCar);
+		URL urlPurchase = new URL("http://localhost:8080/ServerCarRenting/services/MLVCarsService?method=purchaseBasket&strLicensePlates="+ strCar +"&amount="+ this.moneyAvailable);
 		HttpURLConnection connectionPurchase = (HttpURLConnection)urlPurchase.openConnection();
 		connectionPurchase.setRequestMethod("GET");
 		connectionPurchase.setDoOutput(true);
 		connectionPurchase.connect();
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(connectionPurchase.getInputStream()));
-		in.ready();
+
 		sellableCars(response);
 	}
 
