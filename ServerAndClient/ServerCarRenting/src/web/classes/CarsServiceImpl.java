@@ -66,14 +66,14 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 	private List<RentInformation> sortByBrand(List<RentInformation> list) {
 		Collections.sort(list, new Comparator<RentInformation>() {
-		    public int compare(RentInformation x, RentInformation y) {
-		        try {
+			public int compare(RentInformation x, RentInformation y) {
+				try {
 					return x.getCar().getBrand().compareToIgnoreCase(y.getCar().getBrand());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
 				return 0;
-		    }
+			}
 		});
 		return list;
 	}
@@ -83,7 +83,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
 		// sort alphabetically
 		return sortByBrand(list);
-		//return new ArrayList<RentInformation>(cars.values());
+		// return new ArrayList<RentInformation>(cars.values());
 	}
 
 	@Override
@@ -123,14 +123,15 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 		for (Iterator<Client> it = clients.iterator(); it.hasNext();) {
 			Client iteClient = it.next();
-			if (!loggedLogins.contains(login) && iteClient.getLogin().equals(login) && iteClient.getPassword().equals(password)) {
+			if (!loggedLogins.contains(login) && iteClient.getLogin().equals(login)
+					&& iteClient.getPassword().equals(password)) {
 				loggedLogins.add(login);
 				return iteClient;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean logOut(String login) throws RemoteException {
 		return loggedLogins.remove(login);
@@ -191,7 +192,10 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public synchronized boolean purchase(List<Car> cars) throws RemoteException {
+	public synchronized boolean purchase(List<Car> cars, double amount) throws RemoteException {
+		if( amount < computeTotalPrice(cars)){
+			return false;
+		}
 		if (containsCars(cars) && areSellable(cars)) {
 			for (Car c : cars) {
 				String licensePlate = c.getLicensePlate();
@@ -200,6 +204,14 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 			return true;
 		}
 		return false;
+	}
+
+	private double computeTotalPrice(List<Car> cars) throws RemoteException {
+		double sum = 0;
+		for (Car car : cars) {
+			sum += car.getPrice();
+		}
+		return sum;
 	}
 
 	private boolean areSellable(List<Car> cars) throws RemoteException {

@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+body{
+		background-color:rgba(220,220,220,0.5);
+
+}
+h2{
+	text-align:center;
+}
+
+form#converter{
+	margin-top:10px;
+	margin-left:10px;
+}
+
+#right{
+	background-color:rgba(255,0,0,0.6);
+	float:right;
+	height:100%;
+	width:19%;
+	min-height:500px;
+	text-align:center;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+#left{
+	background-color:rgba(0,0,255,0.6);
+	float:left;
+	height:100%;
+	width:80%;
+	min-height:500px;
+}
+
+table, th, td {
+   border: 1px solid black;
+	margin-left: auto;
+    margin-right: auto;
+}
+

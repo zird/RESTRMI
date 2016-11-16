@@ -1,7 +1,9 @@
 package web.classes;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 
 @SuppressWarnings("deprecation")
@@ -49,6 +51,7 @@ public class CarServer {
 			service.addCar("DJ 939 DL", "TOYOTA", "YARIS", getRandomCalendar(), getRandomPrice());
 			service.addCar("AO 838 DJ", "OPEL", "CORSA", getRandomCalendar(), getRandomPrice());
 			service.addCar("FJ 123 MQ", "FORD", "FIESTA", getRandomCalendar(), getRandomPrice());
+		
 		} catch (Exception e) {
 			System.out.println("Trouble: " + e);
 		}

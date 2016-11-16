@@ -38,7 +38,9 @@ public class CarClient {
 				break;
 			}
 
+
 			//carService.addClient(new ClientImpl(login, passwd, firstname, lastname, st));
+
 			Client client1 = carService.logIn(login, passwd);
 			if (null != client1) {
 				System.out.println("Login failed");
@@ -78,7 +80,7 @@ public class CarClient {
 			client1.addCarToBasket(target);
 			List<Car> cars = client1.getBasket();
 
-			System.out.println("buyed : " + carService.purchase(cars));
+			System.out.println("buyed : " + carService.purchase(cars,50000));
 
 			System.out.println("\n ----- Recherche SELLABLE------ ######");
 			System.out.println(carService.getSellableCars());
