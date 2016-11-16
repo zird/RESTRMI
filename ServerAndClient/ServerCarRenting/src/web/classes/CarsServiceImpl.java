@@ -136,7 +136,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 	}
 
 	@Override
-	public synchronized boolean purchase(Client client, List<Car> cars) throws RemoteException {
+	public synchronized boolean purchase(List<Car> cars) throws RemoteException {
 		if (containsCars(cars) && areSellable(cars)) {
 			for (Car c : cars) {
 				String licensePlate = c.getLicensePlate();

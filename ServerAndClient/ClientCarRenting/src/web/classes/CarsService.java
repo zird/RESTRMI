@@ -124,10 +124,9 @@ public interface CarsService extends Remote, Serializable {
 
 	/**
 	 * A client want to purchase car(s)
-	 * @param client client 
 	 * @param cars list of car
 	 * @return true if all cars is purchasable
 	 * @throws RemoteException
 	 */
-	public boolean purchase(Client client, List<Car> cars) throws RemoteException;
+	public boolean purchase(List<Car> cars) throws RemoteException;
 }
