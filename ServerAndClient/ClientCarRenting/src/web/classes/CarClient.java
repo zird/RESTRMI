@@ -9,9 +9,14 @@ import java.util.Scanner;
 @SuppressWarnings("deprecation")
 public class CarClient {
 	public static void main(String[] args) {
+		if(args.length!=1){
+			usage();
+			return;
+		}
 		try {
-
-			String codebase = "file:../../ServerCarRenting/bin/";
+			String pathToCodebase = args[0];
+			System.out.println("[INFO] Server location : "+pathToCodebase);
+			String codebase = "file:"+pathToCodebase;
 			System.setProperty("java.rmi.server.codebase", codebase);
 			System.setProperty("java.security.policy", "grant.policy");
 			System.setSecurityManager(new RMISecurityManager());
@@ -32,7 +37,7 @@ public class CarClient {
 				break;
 			}
 
-			carService.addClient(new ClientImpl(login, passwd, firstname, lastname, st));
+			carService.addClient(login, passwd, firstname, lastname, st);
 
 			Client client1 = carService.logIn(login, passwd);
 			if (null != client1) {
@@ -84,13 +89,12 @@ public class CarClient {
 			scan.close();
 
 		} catch (Exception e) {
-			usage();
 			System.out.println("Exception" + e);
 			return;
 		}
 	}
 
 	private static void usage() {
-		System.out.println("java CarClient login password firstname lastname status");
+		System.out.println("CarClient login password firstname lastname status");
 	}
 }

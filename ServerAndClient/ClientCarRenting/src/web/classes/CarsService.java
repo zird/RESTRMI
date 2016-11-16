@@ -91,8 +91,8 @@ public interface CarsService extends Remote, Serializable {
 	 * @return true if created 
 	 * @throws RemoteException
 	 */
-	public boolean addClient(Client client) throws RemoteException;
-
+	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException;
+	
 	/**
 	 * A Client returned the car
 	 * @param client Client
@@ -140,10 +140,9 @@ public interface CarsService extends Remote, Serializable {
 
 	/**
 	 * A client want to purchase car(s)
-	 * @param client client 
 	 * @param cars list of car
 	 * @return true if all cars is purchasable
 	 * @throws RemoteException
 	 */
-	public boolean purchase(Client client, List<Car> cars) throws RemoteException;
+	public boolean purchase(List<Car> cars) throws RemoteException;
 }

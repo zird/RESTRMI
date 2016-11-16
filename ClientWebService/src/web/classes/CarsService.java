@@ -1,4 +1,5 @@
 package web.classes;
+
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -25,33 +26,17 @@ public interface CarsService extends Remote, Serializable {
 	 * @param licensePlate car's licensePlate
 	 * @throws java.rmi.RemoteException
 	 */
-	public void removeCar(String licensePlate) throws RemoteException;
+	public void removeCar(String licensePlate) throws java.rmi.RemoteException;
 
 	/**
 	 * A client wants to rent a car
 	 * @param client Client who will rent the car
 	 * @param licensePlate car's license plate
-	 * @return SUCCESS if the renter has changed,
-	 * 		   WAITING_QUEUE if put in queue,
-	 *         ALREADY_WAITING_QUEUE if renting has failed because already
-	 *         waiting for this car,
-	 *         ALREADY_RENTING if the client is already renting the car,
-	 *         ERROR if the car doesn't exist
+	 * @return True if the client can have the car, false if the client is put in the queue or the car doesn't exists
 	 * @throws java.rmi.RemoteException
 	 */
-	public RentStatus rent(Client client, String licensePlate) throws RemoteException;
+	public boolean rent(Client client, String licensePlate) throws java.rmi.RemoteException;
 
-	/**
-	 * Get the renting status of the specified car by the specified client
-	 * @param client the client to check the renting status for
-	 * @param licensePlate the license plate of the car to check
-	 * @return ALREADY_WAITING_QUEUE if the client is currently in the waiting queue for the car,
-	 * 		   ALREADY_RENTING if the client is currently renting the car,
-	 * 		   SUCCESS if the car is available and the client is allowed to rent it
-	 * @throws RemoteException
-	 */
-	public RentStatus getRentStatus(Client client, String licensePlate) throws RemoteException;
-	
 	/**
 	 * Return all RentInformation of the hashmap
 	 * @return List of all RentInformation
@@ -59,22 +44,6 @@ public interface CarsService extends Remote, Serializable {
 	 */
 	public List<RentInformation> list() throws RemoteException;
 
-	/**
-	 * Return all RentInformation where the client is in the waiting queue
-	 * @param client the client to filter the list for
-	 * @return List of all RentInformation where the client is in the waiting queue
-	 * @throws RemoteException
-	 */
-	public List<RentInformation> listClientWaiting(Client client) throws RemoteException;
-	
-	/**
-	 * Return all RentInformation where the client is renting the car
-	 * @param client the client to filter the list for
-	 * @return List of all RentInformation where the client is renting the car
-	 * @throws RemoteException
-	 */
-	public List<RentInformation> listClientRenting(Client client) throws RemoteException;
-	
 	/**
 	 * Allow to login to the server
 	 * @param login Login
@@ -91,7 +60,7 @@ public interface CarsService extends Remote, Serializable {
 	 * @return true if created 
 	 * @throws RemoteException
 	 */
-	public boolean addClient(String login, String password, String firstname, String lastname, Status status) throws RemoteException;
+	public boolean addClient(Client client) throws RemoteException;
 
 	/**
 	 * A Client returned the car
@@ -140,7 +109,6 @@ public interface CarsService extends Remote, Serializable {
 
 	/**
 	 * A client want to purchase car(s)
-	 * @param client client 
 	 * @param cars list of car
 	 * @return true if all cars is purchasable
 	 * @throws RemoteException

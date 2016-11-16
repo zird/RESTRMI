@@ -1,0 +1,36 @@
+<project name="ClientCarRenting" default="jar" basedir=".">
+	<description>
+		Server for car renting service
+	</description>
+	<property name ="srcdir" location="src/" />
+	<property name ="builddir" location="build/" />
+	<property name ="targetdir" location="build/" />
+	<property name ="mainclass" value="web.classes.CarClientGUI" />
+
+	<target name="init" depends="clean">
+		<tstamp/>
+		<mkdir dir="${builddir}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source">
+		<javac srcdir="${srcdir}" destdir="${builddir}" includeantruntime="false"/>
+		<copy todir="${builddir}" file="${srcdir}/grant.policy" />
+		<copy todir="${builddir}/web/classes" file="${srcdir}/web/classes/bootstrap3.css" />
+	</target>
+
+	<target name="jar" depends="compile" description="generate the jar">
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${targetdir}/${ant.project.name}.jar" basedir="${builddir}">
+			<manifest>
+				<attribute name="Main-Class" value="${mainclass}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete file="${targetdir}/${ant.project.name}.jar" />
+
+	</target>
+
+</project>

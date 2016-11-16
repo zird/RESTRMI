@@ -290,9 +290,9 @@ public class GUI extends Application {
 					status = Status.OUTSIDER;
 				}
 				try {
-					Client newClient = new ClientImpl(fieldLogin.getText(), fieldPassword.getText(),
-							fieldFirstName.getText(), fieldLastName.getText(), status);
-					if (false == carsService.addClient(newClient)) {
+					
+					if (false == carsService.addClient(fieldLogin.getText(), fieldPassword.getText(),
+							fieldFirstName.getText(), fieldLastName.getText(), status)) {
 						resultText.setVisible(true);
 						System.out.println("Registering FAILED : already exists");
 					} else {
@@ -752,11 +752,9 @@ public class GUI extends Application {
 	 */
 	public void start() throws RemoteException {
 		/* CLIENTS FOR DEMO PURPOSES */
-		Client demoClient = new ClientImpl("a", "a", "John", "Doe", Status.STUDENT);
-		Client demoClient2 = new ClientImpl("b", "b", "Jane", "Doe", Status.PROFESSOR);
-		carsService.addClient(demoClient);
-		carsService.addClient(demoClient2);
-		
+		carsService.addClient("a", "a", "John", "Doe", Status.STUDENT);
+		carsService.addClient("b", "b", "Jane", "Doe", Status.PROFESSOR);
+
 		launch();
 	}
 	
