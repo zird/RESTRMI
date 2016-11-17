@@ -59,8 +59,9 @@ public class GUI extends Application {
 	private Client sessionClient = null;
 	private CarsService carsService;
 	/* Related to tabs */
-	private enum TabName { NONE, ALL_CARS, WAITING_CARS, RENTING_CARS; }
+	private enum TabName { NONE, ALL_CARS, WAITING_CARS, RENTING_CARS, SEARCH_CARS; }
 	private TabName currentTab = TabName.NONE;
+	private String currentSearchInput = "";
 	private HashMap<TabName, List<RentInformation>> tabs = new HashMap<>();
 	
 	
@@ -108,6 +109,7 @@ public class GUI extends Application {
 		tabs.put(TabName.RENTING_CARS, carsService.listClientRenting(sessionClient));
 		tabs.put(TabName.WAITING_CARS, carsService.listClientWaiting(sessionClient));
 		tabs.put(TabName.ALL_CARS, carsService.list());
+		tabs.put(TabName.SEARCH_CARS, carsService.listSearchResults(currentSearchInput));
 	}
 	
 	private void updateTabList(TabName tabName) throws RemoteException {
@@ -120,6 +122,9 @@ public class GUI extends Application {
 			break;
 		case ALL_CARS:
 			tabs.put(tabName, carsService.list());
+			break;
+		case SEARCH_CARS:
+			tabs.put(tabName, carsService.listSearchResults(currentSearchInput));
 			break;
 		default:
 			break;
@@ -353,10 +358,12 @@ public class GUI extends Application {
 		Tab tab1 = new Tab("All cars");
 		Tab tab2 = new Tab("My current cars");
 		Tab tab3 = new Tab("My waiting list");
+		Tab tab4 = new Tab("Search cars");
 		tab1.setClosable(false);
 		tab2.setClosable(false);
 		tab3.setClosable(false);
-		tabPane.getTabs().addAll(tab1, tab2, tab3);
+		tab4.setClosable(false);
+		tabPane.getTabs().addAll(tab1, tab2, tab3, tab4);
 		
 		// set content of default tab : tab1
 		currentTab = TabName.ALL_CARS;
@@ -378,10 +385,17 @@ public class GUI extends Application {
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
-			} else { // if tab "Waiting list"
+			} else if (newTab.equals(tab3)) { // if tab "Waiting list"
 				try {
 					currentTab = TabName.WAITING_CARS;
 					tab3.setContent(getTabContent());
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+			} else {
+				try {
+					currentTab = TabName.SEARCH_CARS;
+					tab4.setContent(getTabContent());
 				} catch (RemoteException e) {
 					System.err.println("Exception : " + e);
 				}
@@ -455,7 +469,7 @@ public class GUI extends Application {
 		styleAccordion(accordion);
 		updateTabList(currentTab); // update the list of RentInfos for the tab
 		
-		if (tabs.get(currentTab).isEmpty()) {
+		if (TabName.SEARCH_CARS != currentTab && tabs.get(currentTab).isEmpty()) {
 			Text message = new Text("The list is empty.");
 			Text message2 = new Text("Check all cars to rent a car !");
 			message.setFont(Font.font("Arial", FontWeight.NORMAL, 60));
@@ -480,22 +494,31 @@ public class GUI extends Application {
 	}
 
 	/**
+	 * Add the pane containing the search bar.
+	 * @param accordion the Accordion object to add the search bar in
+	 * @throws RemoteException
+	 */
+	private void addSearchBar(Accordion accordion) throws RemoteException {
+		TitledPane searchBarPane = new TitledPane("Search", new Rectangle(300,400,Color.GRAY));
+		styleTitledPane(searchBarPane);
+		
+		GridPane searchBarContent = getSearchBarContent(searchBarPane, accordion);
+		searchBarPane.setContent(searchBarContent);
+		accordion.getPanes().add(0, searchBarPane); // add to head
+	}
+	
+	/**
 	 * Add the pane containing the form to add a new car, in the specified Accordion object
 	 * @param accordion
 	 * @throws RemoteException
 	 */
-	private void addNewCarPane(Accordion accordion) throws RemoteException {
-		TitledPane newCarPane = getNewCarPane(accordion);
-		accordion.getPanes().add(0, newCarPane);
-	}
-
-	private TitledPane getNewCarPane(Accordion accordion) throws RemoteException {
+	private void addFormNewCar(Accordion accordion) throws RemoteException {
 		TitledPane newCarPane = new TitledPane("Add a new car...", new Rectangle(300,400,Color.GRAY));
 		styleTitledPane(newCarPane);
 		
-		GridPane newCarPaneContent = getNewCarPaneContent(newCarPane, accordion);
+		GridPane newCarPaneContent = getFormNewCarContent(newCarPane, accordion);
 		newCarPane.setContent(newCarPaneContent);
-		return newCarPane;
+		accordion.getPanes().add(0, newCarPane); // add to head
 	}
 
 	/**
@@ -504,7 +527,7 @@ public class GUI extends Application {
 	 * @param accordion the accordion containing the list of all cars
 	 * @return a pane with the form to add a car
 	 */
-	private GridPane getNewCarPaneContent(TitledPane parentToCollapse, Accordion accordion) {
+	private GridPane getFormNewCarContent(TitledPane parentToCollapse, Accordion accordion) {
 		/* content of the titled pane */
 		GridPane newCarPaneContent = new GridPane();
 		newCarPaneContent.setHgap(15);
@@ -593,6 +616,46 @@ public class GUI extends Application {
 			}
 		});
 		return newCarPaneContent;
+	}
+	
+	/**
+	 * Get a pane with the form to search a car
+	 * @param parentToCollapse the parent pane to collapse on success
+	 * @param accordion the accordion containing the list of all cars
+	 * @return a pane with the form to add a car
+	 */
+	private GridPane getSearchBarContent(TitledPane parentToCollapse, Accordion accordion) {
+		/* content of the titled pane */
+		GridPane searchBarContent = new GridPane();
+		searchBarContent.setHgap(15);
+		searchBarContent.setVgap(5);
+		Button btnSearch = new Button("Search");
+		btnSearch.getStyleClass().addAll("button", "success", "lg");
+		Label labelSearch = new Label("Search");
+		TextField fieldSearch = new TextField();
+		searchBarContent.add(labelSearch, 0, 1);
+		searchBarContent.add(fieldSearch, 1, 1);
+		searchBarContent.add(btnSearch, 1, 2);
+		
+		/* Disabling buttons on conditions */
+		btnSearch.disableProperty().bind(Bindings.isEmpty(fieldSearch.textProperty()));
+		
+		/* Button listener */
+		btnSearch.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent t) {
+				currentSearchInput = fieldSearch.getText();
+				try {
+					parentToCollapse.setExpanded(false); // collapse pane
+					refreshAccordion(accordion);
+				} catch (RemoteException e) {
+					System.err.println("Exception : " + e);
+				}
+				// we chose not to reset the field after searching
+			}
+
+		});
+		return searchBarContent;
 	}
 
 	/**
@@ -757,10 +820,15 @@ public class GUI extends Application {
 	private void refreshAccordion(Accordion accordion) throws RemoteException {
 		updateTabList(currentTab); // update the list of RentInfos for the tab
 		accordion.getPanes().clear();
-		fillAccordionWithCars(accordion, tabs.get(currentTab));
+		
 		if (currentTab == TabName.ALL_CARS) {
-			addNewCarPane(accordion);
+			addFormNewCar(accordion);
 		}
+		if (currentTab == TabName.SEARCH_CARS) {
+			addSearchBar(accordion);
+		}
+		
+		fillAccordionWithCars(accordion, tabs.get(currentTab));
 	}
 	
 	private void refreshCarPaneButtons(Car car, Button btnRent, Button btnReturn) throws RemoteException {
@@ -807,7 +875,7 @@ public class GUI extends Application {
 	private void styleAccordion(Accordion accordion) {
 		accordion.setStyle("-fx-background-color: white;");
 		accordion.setPrefWidth(appWidth-10);
-		accordion.setPrefHeight(appHeight);
+		accordion.setPrefHeight(appHeight-110);
 	}
 
 	private void styleScrollPane(ScrollPane scrollPane) {

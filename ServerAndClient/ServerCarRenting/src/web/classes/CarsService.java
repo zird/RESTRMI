@@ -53,14 +53,14 @@ public interface CarsService extends Remote, Serializable {
 	public RentStatus getRentStatus(Client client, String licensePlate) throws RemoteException;
 	
 	/**
-	 * Return all RentInformation of the hashmap
+	 * Return all RentInformation objects of the hashmap
 	 * @return List of all RentInformation
 	 * @throws RemoteException
 	 */
 	public List<RentInformation> list() throws RemoteException;
 
 	/**
-	 * Return all RentInformation where the client is in the waiting queue
+	 * Return all RentInformation objects where the client is in the waiting queue
 	 * @param client the client to filter the list for
 	 * @return List of all RentInformation where the client is in the waiting queue
 	 * @throws RemoteException
@@ -68,12 +68,20 @@ public interface CarsService extends Remote, Serializable {
 	public List<RentInformation> listClientWaiting(Client client) throws RemoteException;
 	
 	/**
-	 * Return all RentInformation where the client is renting the car
+	 * Return all RentInformation objects where the client is renting the car
 	 * @param client the client to filter the list for
 	 * @return List of all RentInformation where the client is renting the car
 	 * @throws RemoteException
 	 */
 	public List<RentInformation> listClientRenting(Client client) throws RemoteException;
+	
+	/**
+	 * Return all RentInformation objects matching the specified search key words
+	 * @param seachBarInput the text the user has typed in the search bar
+	 * @return List of all RentInformation objects matching the specified search key words
+	 * @throws RemoteException
+	 */
+	public List<RentInformation> listSearchResults(String seachBarInput) throws RemoteException;
 	
 	/**
 	 * Allow to login to the server

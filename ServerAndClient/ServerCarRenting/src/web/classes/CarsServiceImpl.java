@@ -111,6 +111,26 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		}
 		return sortByBrand(list);
 	}
+	
+	@Override
+	public List<RentInformation> listSearchResults(String searchBarInput) throws RemoteException {
+		if (searchBarInput.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		String[] keyWords = searchBarInput.split(" ");
+		
+		List<RentInformation> list = cars.values().stream().collect(Collectors.toList());
+		for (Iterator<RentInformation> ite = list.iterator(); ite.hasNext();) {
+			Car car = ite.next().getCar(); // get car
+			for (String keyWord : keyWords) { // for each keyword
+				if (!car.getBrand().contains(keyWord.toUpperCase()) && !car.getModel().contains(keyWord.toUpperCase())) {
+					ite.remove();
+				}
+			}
+		}
+		return sortByBrand(list);
+	}
 
 	@Override
 	public boolean addClient(String login, String password, String firstname, String lastname, Status status)
@@ -193,7 +213,7 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 
 	@Override
 	public synchronized boolean purchase(List<Car> cars, double amount) throws RemoteException {
-		if( amount < computeTotalPrice(cars)){
+		if (amount < computeTotalPrice(cars)) {
 			return false;
 		}
 		if (containsCars(cars) && areSellable(cars)) {

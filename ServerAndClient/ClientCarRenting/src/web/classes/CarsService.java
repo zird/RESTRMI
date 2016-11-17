@@ -76,6 +76,14 @@ public interface CarsService extends Remote, Serializable {
 	public List<RentInformation> listClientRenting(Client client) throws RemoteException;
 	
 	/**
+	 * Return all RentInformation objects matching the specified search key words
+	 * @param seachBarInput the text the user has typed in the search bar
+	 * @return List of all RentInformation objects matching the specified search key words
+	 * @throws RemoteException
+	 */
+	public List<RentInformation> listSearchResults(String seachBarInput) throws RemoteException;
+	
+	/**
 	 * Allow to login to the server
 	 * @param login Login
 	 * @param password Password
