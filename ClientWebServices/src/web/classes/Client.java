@@ -55,31 +55,4 @@ public interface Client extends Remote, Serializable {
 	 * @throws RemoteException
 	 */
 	public void notifyReturn(Car car) throws RemoteException;
-
-	/**
-	 * Add car to the basket
-	 * @param car car which will be add
-	 * @throws RemoteException
-	 */
-	public void addCarToBasket(Car car) throws RemoteException;
-
-	/**
-	 * Remove @param car in the basket
-	 * @param car car which will be removed
-	 * @throws RemoteException
-	 */
-	public void removeCarFromBasket(Car car) throws RemoteException;
-
-	/**
-	 * Remove all car in the baskets
-	 * @throws RemoteException
-	 */
-	public void removeAllFromBasket() throws RemoteException;
-
-	/**
-	 * Return all car in the basket
-	 * @return List of car in the basket
-	 * @throws RemoteException
-	 */
-	public List<Car> getBasket() throws RemoteException;
 }

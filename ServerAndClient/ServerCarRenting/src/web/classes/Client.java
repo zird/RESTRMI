@@ -20,12 +20,4 @@ public interface Client extends Remote, Serializable {
 
 	public void notifyReturn(Car car) throws RemoteException;
 
-	public void addCarToBasket(Car car) throws RemoteException;
-
-	public void removeCarFromBasket(Car car) throws RemoteException;
-
-	public void removeAllFromBasket() throws RemoteException;
-
-	public List<Car> getBasket() throws RemoteException;
-
 }

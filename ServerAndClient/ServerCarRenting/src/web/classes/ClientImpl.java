@@ -19,7 +19,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	private final String password;
 	private final String firstname;
 	private final String lastname;
-	private Set<Car> basket;
 
 	public ClientImpl(String login, String password, String firstname, String lastname, Status status)
 			throws RemoteException {
@@ -28,7 +27,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 		this.status = Objects.requireNonNull(status);
 		this.firstname = Objects.requireNonNull(firstname);
 		this.lastname = Objects.requireNonNull(lastname);
-		this.basket = new HashSet<>();
 	}
 
 	@Override
@@ -54,11 +52,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	@Override
 	public String getLastname() throws RemoteException {
 		return lastname;
-	}
-
-	@Override
-	public List<Car> getBasket() {
-		return new ArrayList<>(basket);
 	}
 
 	@Override
@@ -89,21 +82,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 		alert.setHeaderText(null);
 		alert.showAndWait();*/
 		System.out.println("Notification from server : returned car "+ car.getModel());
-	}
-
-	@Override
-	public void addCarToBasket(Car car) throws RemoteException {
-		basket.add(car);
-	}
-
-	@Override
-	public void removeCarFromBasket(Car car) throws RemoteException {
-		basket.remove(car);
-	}
-
-	@Override
-	public void removeAllFromBasket() throws RemoteException {
-		basket.clear();
 	}
 
 }
