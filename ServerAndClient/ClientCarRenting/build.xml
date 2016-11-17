@@ -16,6 +16,7 @@
 		<javac srcdir="${srcdir}" destdir="${builddir}" includeantruntime="false"/>
 		<copy todir="${builddir}" file="${srcdir}/grant.policy" />
 		<copy todir="${builddir}/web/classes" file="${srcdir}/web/classes/bootstrap3.css" />
+		<copy todir="${builddir}/web/classes" file="${srcdir}/web/classes/icon_edit.png" />
 	</target>
 
 	<target name="jar" depends="compile" description="generate the jar">
