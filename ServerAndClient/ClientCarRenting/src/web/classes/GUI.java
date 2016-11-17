@@ -4,20 +4,19 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,8 +35,11 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -351,6 +353,7 @@ public class GUI extends Application {
 		textIdentity.setFont(Font.font("Arial", FontWeight.NORMAL, 25));
 		Button btnLogout = new Button("Logout");
 		btnLogout.getStyleClass().setAll("button", "danger", "sm");
+		
 		Button btnRefresh = new Button("Refresh");
 		btnRefresh.getStyleClass().setAll("button", "info", "sm");
 		buttonsBox.getChildren().addAll(btnLogout, btnRefresh);
@@ -706,6 +709,9 @@ public class GUI extends Application {
 		Text textPrice = new Text(car.getPrice() + " EUR");
 		Text textAvailable = new Text(car.isAvailable() ? "Yes":"No");
 		textAvailable.setFill(car.isAvailable() ? Color.GREEN:Color.RED);
+		Image iconEdit = new Image(getClass().getResourceAsStream("icon_edit.png"));
+		Button btnEditPrice = new Button();
+		btnEditPrice.setGraphic(new ImageView(iconEdit));
 		
 		carPaneContent.add(labelBrand, 0, 0);
 		carPaneContent.add(textBrand, 1, 0);
@@ -717,9 +723,50 @@ public class GUI extends Application {
 		carPaneContent.add(textFirstCirculate, 1, 3);
 		carPaneContent.add(labelPrice, 0, 4);
 		carPaneContent.add(textPrice, 1, 4);
+		carPaneContent.add(btnEditPrice, 2, 4);
 		carPaneContent.add(labelAvailable, 0, 5);
 		carPaneContent.add(textAvailable, 1, 5);
 		
+		btnEditPrice.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent t) {
+				TextInputDialog dialog = new TextInputDialog();
+				dialog.setTitle("Edit price");
+				dialog.setHeaderText(null);
+				dialog.setContentText("Enter the new price : ");
+
+				// The Java 8 way to get the response value (with lambda expression).
+				Optional<String> result = dialog.showAndWait();
+				result.ifPresent(newPriceString -> {
+					try {
+						Double newPrice = Double.parseDouble(newPriceString);
+						if (newPrice < 0) {
+							Alert alert = new Alert(AlertType.ERROR);
+							alert.setTitle("Error");
+							alert.setHeaderText(null);
+							alert.setContentText("The input price is negative.");
+							alert.showAndWait();
+							return;
+						}
+						carsService.setCarPrice(car.getLicensePlate(), newPrice);
+						textPrice.setText(car.getPrice() + " EUR");
+						Alert alert = new Alert(AlertType.INFORMATION);
+						alert.setTitle("Confirmation");
+						alert.setHeaderText(null);
+						alert.setContentText("The price was changed and will appear after refreshing.");
+						alert.showAndWait();
+					} catch(NumberFormatException e) { // input validation
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error");
+						alert.setHeaderText(null);
+						alert.setContentText("The input price is invalid.");
+						alert.showAndWait();
+					} catch (RemoteException e) {
+						System.err.println("Exception : " + e);
+					}
+				});
+			}
+		});
 		return carPaneContent;
 	}
 	
