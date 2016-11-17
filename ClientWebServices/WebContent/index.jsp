@@ -95,15 +95,19 @@
 								.concat(((cars[i].innerHTML).concat(","))
 										.replace(/\s/g, ''));
 					}
-					output = output.concat((cars[i].innerHTML).replace(/\s/g,
-							''));
+					output = output.concat((cars[i].innerHTML).replace(/\s/g,''));
 					$.ajax({
 						type : "get",
 						url : "MLVServlet", //this is my servlet
 						data : "action=" + id + "&cars=" + output,
 						success : function(msg) {
-							$("#tosell").html(msg);
-							$("#basket").empty();
+							if(msg === "false"){
+								alert("Vous n'avez pas assez de fond");
+								$("#basket").empty();
+							}else{
+								$("#tosell").html(msg);
+								$("#basket").empty();
+							}
 						}
 					})
 				});

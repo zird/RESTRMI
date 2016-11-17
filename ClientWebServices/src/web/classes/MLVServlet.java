@@ -38,7 +38,6 @@ public class MLVServlet extends HttpServlet {
 	 */
 	public MLVServlet() {
 		super();
-		System.setSecurityManager(null);
 		// TODO Auto-generated constructor stub
 		String codebase = "file:/Users/simrene/git/RESTRMI/ServerAndClient/ServerCarRenting/bin/";
 		System.setProperty("java.rmi.server.codebase", codebase);
@@ -47,7 +46,7 @@ public class MLVServlet extends HttpServlet {
 				"file:/Users/simrene/git/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy");
 
 		System.setSecurityManager(new RMISecurityManager());
-		moneyAvailable = 3000.00;
+		moneyAvailable = 30000.00;
 	}
 
 	/**
@@ -105,9 +104,19 @@ public class MLVServlet extends HttpServlet {
 		connectionPurchase.setDoOutput(true);
 		connectionPurchase.connect();
 		
-		BufferedReader in = new BufferedReader(new InputStreamReader(connectionPurchase.getInputStream()));
-
-		sellableCars(response);
+		BufferedReader rd = new BufferedReader(new InputStreamReader(connectionPurchase.getInputStream()));
+		StringBuilder result = new StringBuilder();
+		String line;
+		while ((line = rd.readLine()) != null) {
+		     result.append(line);
+		}
+		rd.close();
+		if(result.toString().contains(">true<")){
+			sellableCars(response);
+		}else{
+			basket.clear();
+			response.getWriter().append("false");
+		}
 	}
 
 	private void sellableCars(HttpServletResponse response)
