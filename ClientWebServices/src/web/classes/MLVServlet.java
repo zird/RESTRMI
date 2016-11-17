@@ -38,13 +38,11 @@ public class MLVServlet extends HttpServlet {
 	 */
 	public MLVServlet() {
 		super();
-		// TODO Auto-generated constructor stub
-		String codebase = "file:/Users/simrene/git/RESTRMI/ServerAndClient/ServerCarRenting/bin/";
+		
+		String codebase = "file:" + " "; // ADD SERVER PATH HERE
+		
 		System.setProperty("java.rmi.server.codebase", codebase);
-
-		System.setProperty("java.security.policy",
-				"file:/Users/simrene/git/RESTRMI/ServerAndClient/ServerCarRenting/bin/grant.policy");
-
+		System.setProperty("java.security.policy","grant.policy");
 		System.setSecurityManager(new RMISecurityManager());
 		moneyAvailable = 30000.00;
 	}

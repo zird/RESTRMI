@@ -52,6 +52,7 @@ public class CarServer {
 			service.addCar("AO 838 DJ", "OPEL", "CORSA", getRandomCalendar(), getRandomPrice());
 			service.addCar("FJ 123 MQ", "FORD", "FIESTA", getRandomCalendar(), getRandomPrice());
 		
+			System.out.println("The server has started");
 		} catch (Exception e) {
 			System.out.println("Trouble: " + e);
 		}

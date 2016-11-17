@@ -25,7 +25,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <element name="purchaseBasketResponse">
     <complexType>
      <sequence>
-      <element name="purchaseBasketReturn" type="xsd:string"/>
+      <element name="purchaseBasketReturn" type="xsd:boolean"/>
      </sequence>
     </complexType>
    </element>
