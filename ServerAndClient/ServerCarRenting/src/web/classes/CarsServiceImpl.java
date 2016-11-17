@@ -64,6 +64,14 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		return RentStatus.SUCCESS;
 	}
 
+	@Override
+	public void setCarPrice(String licensePlate, double price) throws RemoteException {
+		RentInformation rentInfo = cars.get(licensePlate);
+		if (rentInfo != null) {
+			rentInfo.getCar().setPrice(price);
+		}
+	}
+
 	private List<RentInformation> sortByBrand(List<RentInformation> list) {
 		Collections.sort(list, new Comparator<RentInformation>() {
 			public int compare(RentInformation x, RentInformation y) {
@@ -252,5 +260,6 @@ public class CarsServiceImpl extends UnicastRemoteObject implements CarsService 
 		}
 		return true;
 	}
+
 
 }

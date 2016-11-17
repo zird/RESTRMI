@@ -53,6 +53,14 @@ public interface CarsService extends Remote, Serializable {
 	public RentStatus getRentStatus(Client client, String licensePlate) throws RemoteException;
 	
 	/**
+	 * Set the price of a registered price
+	 * @param licensePlate car's license plate
+	 * @param price price
+	 * @throws RemoteException
+	 */
+	public void setCarPrice(String licensePlate, double price) throws RemoteException;
+	
+	/**
 	 * Return all RentInformation objects of the hashmap
 	 * @return List of all RentInformation
 	 * @throws RemoteException
