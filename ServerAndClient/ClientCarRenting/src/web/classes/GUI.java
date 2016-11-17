@@ -341,7 +341,10 @@ public class GUI extends Application {
 		identityHBox.setPadding(new Insets(15, 15, 15, 40));
 		Text textIdentity;
 		if (null != sessionClient) {
-			textIdentity = new Text(sessionClient.getFirstname() + " " + sessionClient.getLastname());
+			String strStatus = sessionClient.getStatus().toString().substring(0, 1).toUpperCase()
+					+ sessionClient.getStatus().toString().substring(1).toLowerCase();
+			textIdentity = new Text(sessionClient.getFirstname() + " " + sessionClient.getLastname() +
+			 " (" + strStatus + ")");
 		} else {
 			textIdentity = new Text("Error Identity");
 		}
